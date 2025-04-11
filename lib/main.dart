@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_movie/core/di/injection.dart';
+import 'package:flutter_movie/features/movies/data/movie_page.dart';
 import 'package:flutter_movie/features/todo/presentation/pages/todo_page.dart';
 
 void main() async {
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const TodoPage(),
+      home: const MoviePage(),
     );
   }
 }
