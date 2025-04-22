@@ -1,5 +1,5 @@
-import '../api/todo_api.dart';
-import '../models/todo_model.dart';
+import 'package:flutter_movie/features/todo/data/api/todo_api.dart';
+import 'package:flutter_movie/features/todo/data/models/todo_model.dart';
 
 class TodoRepository {
   final TodoApi _api;

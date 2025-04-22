@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 
 class CurlLoggerInterceptor extends Interceptor {
@@ -17,30 +18,30 @@ class CurlLoggerInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final curlCommand = _getCurlCommand(options);
-    print('\n🌐 cURL Request:\n$curlCommand\n');
+    log('\n🌐 cURL Request:\n$curlCommand\n');
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (logResponseBody) {
-      print('\n📥 Response [${response.statusCode}] - ${response.requestOptions.uri}');
+      log('\n📥 Response [${response.statusCode}] - ${response.requestOptions.uri}');
       if (logResponseHeaders) {
-        print('Headers:');
+        log('Headers:');
         response.headers.forEach((name, values) {
-          print('  $name: ${values.join(", ")}');
+          log('  $name: ${values.join(", ")}');
         });
       }
-      print('Body: ${_prettyPrintJson(response.data)}\n');
+      log('Body: ${_prettylogJson(response.data)}\n');
     }
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print('\n❌ Error [${err.response?.statusCode}] - ${err.requestOptions.uri}');
+    log('\n❌ Error [${err.response?.statusCode}] - ${err.requestOptions.uri}');
     if (err.response != null && logResponseBody) {
-      print('Response: ${_prettyPrintJson(err.response?.data)}\n');
+      log('Response: ${_prettylogJson(err.response?.data)}\n');
     }
     handler.next(err);
   }
@@ -72,7 +73,7 @@ class CurlLoggerInterceptor extends Interceptor {
     return command.join(' ');
   }
 
-  String _prettyPrintJson(dynamic json) {
+  String _prettylogJson(dynamic json) {
     if (json == null) return 'null';
     if (json is Map || json is List) {
       const encoder = JsonEncoder.withIndent('  ');

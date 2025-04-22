@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
-import '../models/todo_model.dart';
+import 'package:flutter_movie/features/todo/data/models/todo_model.dart';
 
 part 'todo_api.g.dart';
 

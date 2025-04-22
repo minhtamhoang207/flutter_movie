@@ -19,20 +19,20 @@ class _ApiService implements ApiService {
   String? baseUrl;
 
   @override
-  Future<List<ExampleModel>> getExamples() async {
+  Future<BaseResponse> getTrendingMovies(String apiKey) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'api_key': apiKey};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<ExampleModel>>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<BaseResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/examples',
+              '/trending/movie/day',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -41,9 +41,7 @@ class _ApiService implements ApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    var value = _result.data!
-        .map((dynamic i) => ExampleModel.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = BaseResponse.fromJson(_result.data!);
     return value;
   }
 

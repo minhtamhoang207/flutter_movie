@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_movie/features/movies/data/models/base_response.dart';
+
 import 'package:retrofit/retrofit.dart';
-import 'package:flutter_movie/features/example/data/models/example_model.dart';
+
 
 part 'api_service.g.dart';
 
@@ -8,6 +10,8 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
-  @GET('/examples')
-  Future<List<ExampleModel>> getExamples();
+  @GET('/trending/movie/day')
+  Future<BaseResponse> getTrendingMovies(
+      @Query('api_key') String apiKey,
+      );
 }

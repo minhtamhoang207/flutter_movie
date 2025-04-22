@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_movie/core/di/injection.dart';
-import 'package:flutter_movie/features/movies/data/movie_page.dart';
-import 'package:flutter_movie/features/todo/presentation/pages/todo_page.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/movie_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

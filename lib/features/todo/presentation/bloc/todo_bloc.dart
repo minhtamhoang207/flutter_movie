@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../data/models/todo_model.dart';
-import '../../data/repositories/todo_repository.dart';
+import 'package:flutter_movie/features/todo/data/models/todo_model.dart';
+import 'package:flutter_movie/features/todo/data/repositories/todo_repository.dart';
 
 part 'todo_bloc.freezed.dart';
 part 'todo_event.dart';

@@ -10,7 +10,7 @@ class Injection {
   static Future<void> init() async {
     // DioClient
     getIt.registerLazySingleton(
-        () => DioClient(baseUrl: 'https://jsonplaceholder.typicode.com'));
+        () => DioClient(baseUrl: 'https://api.themoviedb.org/3'),);
 
     // Dio
     getIt.registerLazySingleton(() => getIt<DioClient>().dio);
