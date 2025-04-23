@@ -1,9 +1,10 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
 import 'package:flutter_movie/features/movies/data/models/movie.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/account_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
 
 class MoviePage extends StatefulWidget {
@@ -14,117 +15,135 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
+
   final ApiService apiService = ApiService(getIt<DioClient>().dio);
   List<Movie> trendingMovies = [];
+  List<Movie> popularMovies = [];
+  List<Movie> nowPlayingMovies = [];
+  bool isLoading = true;
+  int _selectedIndex = 0;
+  String selectedGenre = 'All';
 
-  // int _selectedIndex = 0;
-  //
-  // final List<Widget> pages = [];
-  //
-  // final List<String> movieImage = [
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAsD-naLZVYTj25Ra8-pSQFLoPEtbEtvjGzQ&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-8RVVOlllmjxYh_HLxrV4w58DGpmxQt1URg&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFF0BW_56nfhWiPwEohlSewF7QdqEiIE90OA&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIBqs1ma9yYGUAECqYKpl-Pza1LPJOEAo52w&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsRbSnyqlS1qHLiMBQNBLY0aLEG1SOboAWRg&s',
-  // ];
 
-  // final List<String> trendingMovieImage = [
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsRbSnyqlS1qHLiMBQNBLY0aLEG1SOboAWRg&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFF0BW_56nfhWiPwEohlSewF7QdqEiIE90OA&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIBqs1ma9yYGUAECqYKpl-Pza1LPJOEAo52w&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAsD-naLZVYTj25Ra8-pSQFLoPEtbEtvjGzQ&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-8RVVOlllmjxYh_HLxrV4w58DGpmxQt1URg&s',
-  //
-  // ];
-  //
-  // final List<String> newMovieImage = [
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsRbSnyqlS1qHLiMBQNBLY0aLEG1SOboAWRg&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFF0BW_56nfhWiPwEohlSewF7QdqEiIE90OA&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIBqs1ma9yYGUAECqYKpl-Pza1LPJOEAo52w&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAsD-naLZVYTj25Ra8-pSQFLoPEtbEtvjGzQ&s',
-  //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-8RVVOlllmjxYh_HLxrV4w58DGpmxQt1URg&s',
-  // ];
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
-  //
-  //
-  // final List<String> genres = [
-  //   'Action',
-  //   'Comedy',
-  //   'Drama',
-  //   'Horror',
-  //   'Romance',
-  //   'Sci-Fi',
-  //   'Thriller',
-  //   'Adventure',
-  //   'Fantasy',
-  //   'Animation',
-  // ];
-  //
-  //
-  // final List<Map<String, String>> movieData = [
-  //   {
-  //     "title": "Moon Lovers: Scarlet Heart Ryeo",
-  //     "director": "Christopher Nolan",
-  //     "genre": "Drama",
-  //     "year": "2016",
-  //     "description": "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-  //   },
-  //   {
-  //     "title": "My Demon",
-  //     "director": "Bong Joon-ho",
-  //     "genre": "Romance",
-  //     "year": "2023",
-  //     "description": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
-  //   },
-  //   {
-  //     "title": "Interstellar",
-  //     "director": "Christopher Nolan",
-  //     "genre": "Sci-Fi",
-  //     "year": "2014",
-  //     "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-  //   },
-  //   {
-  //     "title": "All of us are Dead",
-  //     "director": "Todd Phillips",
-  //     "genre": "Horror",
-  //     "year": "2020",
-  //     "description": "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society, causing his descent into madness.",
-  //   },
-  //   {
-  //     "title": "Strong Girl Do Bong Soon",
-  //     "director": "Anthony and Joe Russo",
-  //     "genre": "Action",
-  //     "year": "2019",
-  //     "description": "After the devastating events of Infinity War, the Avengers assemble once more to reverse Thanos' actions and restore balance to the universe.",
-  //   },
-  // ];
+  final List<String> genres = [
+    'Action',
+    'Comedy',
+    'Drama',
+    'Horror',
+    'Romance',
+    'Sci-Fi',
+    'Thriller',
+    'Adventure',
+    'Fantasy',
+    'Animation',
+  ];
+
 
   @override
   void initState() {
     super.initState();
-    fetchTrendingMovies();
-    // pages.addAll([
-    //   _buildHomePage(),
-    //   const Center(child: Text('Downloads')),
-    //   const AccountPage(),
-    // ]);
+    fetchMovies();
+
   }
 
-  Future<void> fetchTrendingMovies() async {
+  Future<void> fetchMovies() async {
     try {
-      final response = await apiService.getTrendingMovies(EnvConfig.apiKey);
+      final trending = await apiService.getTrendingMovies("a7d334a9e6ddb9ac1be335a7e3976f4f");
+      final popular = await apiService.getPopularMovies("a7d334a9e6ddb9ac1be335a7e3976f4f");
+      final nowPlaying = await apiService.getNowPlayingMovies("a7d334a9e6ddb9ac1be335a7e3976f4f");
+
+      //de981511d8d2f3632ce9bef447cec089
+
       setState(() {
-        trendingMovies = response.results;
+        trendingMovies = trending.results;
+        popularMovies = popular.results;
+        nowPlayingMovies = nowPlaying.results;
+        isLoading = false;
       });
-    } catch (e) {
-      debugPrint('Error fetching trending movies: $e');
+    }
+    catch (e) {
+      debugPrint('Error fetching movies: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final List<Widget> pages = [
+      SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 5),
+            _buildGenreChips(),
+
+
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:[
+                  _buildSectionTitle("Trending Movies"),
+                  const Text('Show All', style: TextStyle(
+                    color: Colors.deepPurple,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),),
+                ],
+              ),
+            ),
+            _buildTrendingMoviesList(trendingMovies),
+
+
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:[
+                  _buildSectionTitle("Popular Movies"),
+                  const Text('Show All', style: TextStyle(
+                    color: Colors.deepPurple,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),),
+                ],
+              ),
+            ),
+            _buildMoviesList(popularMovies),
+
+
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:[
+                  _buildSectionTitle("Now Playing Movies"),
+                  const Text('Show All', style: TextStyle(
+                    color: Colors.deepPurple,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),),
+                ],
+              ),
+            ),
+            _buildMoviesList(nowPlayingMovies),
+          ],
+        ),
+      ),
+      const Center(child: Text('Download'),),
+      const AccountPage(),
+    ];
+
+
+      return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Movie App',
@@ -140,63 +159,121 @@ class _MoviePageState extends State<MoviePage> {
           ),
         ],
       ),
-      body: trendingMovies.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : _buildTrendingMoviesList(),
-      // pages[_selectedIndex],
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _selectedIndex,
-      //   selectedItemColor: Colors.deepPurple,
-      //   unselectedItemColor: Colors.grey,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _selectedIndex = index;
-      //     }
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator(),)
+          : pages[_selectedIndex], // Use pages here
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.deepPurple,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.download), label: 'Downloads'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My Account'),
+        ],
+      ),
     );
   }
-  //       items: const [
-  //         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-  //         BottomNavigationBarItem(icon: Icon(Icons.download), label: 'Downloads'),
-  //         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My Account'),
-  //       ],
-  //     ),
-  //   );
-  // }
 
-  Widget _buildTrendingMoviesList() {
+
+  Widget _buildGenreChips() {
     return SizedBox(
-      height: 200,
+      height: 50,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: trendingMovies.length,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: genres.length,
         itemBuilder: (context, index) {
-          final movie = trendingMovies[index];
+          final genre = genres[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Chip(
+              label: Text(
+                genre,
+                style: const TextStyle(
+                    color: Colors.white,
+                ),
+              ),
+
+              backgroundColor: Colors.deepPurple,
+              labelStyle: TextStyle(
+                color: selectedGenre == genre ? Colors.white : Colors.black,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30)
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.deepPurple,
+          fontWeight: FontWeight.w600,
+          fontSize: 20,
+        ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildTrendingMoviesList(List<Movie> movies) {
+    return SizedBox(
+      height: 250,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: movies.length,
+        itemBuilder: (context, index) {
+          final movie = movies[index];
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => MovieDetailPage(
-                    imageUrl: "${EnvConfig.imageBaseUrl}${movie.posterPath}",
-                    title: movie.title,
+                    imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                    title: movie.title ?? "No title avaiable",
                     director: "Unknown",
                     genre: "Genre",
                     year: movie.releaseDate?.split('-').first ?? "N/A",
-                    description: movie.overview,
+                    description: movie.overview ?? "No description available",
                   ),
                 ),
               );
             },
             child: Container(
-              width: 130,
+              // width: 150,
               margin: const EdgeInsets.all(8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  "${EnvConfig.imageBaseUrl}${movie.posterPath}",
-                  fit: BoxFit.cover,
-                ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: movie.posterPath != null
+              ? Image.network(
+                        "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace)
+                        {
+                          return const Icon(Icons.broken_image);
+                        },
+                      ) : const Icon(Icons.movie),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                ],
               ),
+
             ),
           );
         },
@@ -205,119 +282,58 @@ class _MoviePageState extends State<MoviePage> {
   }
 }
 
-// Widget _buildHomePage() {
-//     return Padding(
-//       padding: const EdgeInsets.all(10.0),
-//       child: ListView(
-//         children: [
-//           SizedBox(
-//             height: 45,
-//             child: ListView.builder(
-//               itemCount: genres.length,
-//               scrollDirection: Axis.horizontal,
-//               itemBuilder: (context, index) {
-//                 return Padding(
-//                   padding: const EdgeInsets.symmetric(horizontal: 6.0),
-//                   child: Container(
-//                     padding: const EdgeInsets.symmetric(horizontal: 16),
-//                     decoration: BoxDecoration(
-//                       color: Colors.deepPurple,
-//                       borderRadius: BorderRadius.circular(20),
-//                     ),
-//                     alignment: Alignment.center,
-//                     child: Text(
-//                       genres[index],
-//                       style: const TextStyle(color: Colors.white),
-//                     ),
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//           const SizedBox(height: 20),
-//           _buildSectionHeader('Featured Movies'),
-//           _buildHorizontalMovieList(movieImage, height: 250, width: 170),
-//
-//           const SizedBox(height: 20),
-//           _buildSectionHeader('Trending Movies'),
-//           _buildHorizontalMovieList(movieImage, height: 160, width: 110),
-//
-//           const SizedBox(height: 20),
-//           _buildSectionHeader('New Movies'),
-//           _buildHorizontalMovieList(movieImage, height: 160, width: 110),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildSectionHeader(String title) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       children: [
-//         Text(
-//           title,
-//           style: const TextStyle(
-//             color: Colors.deepPurple,
-//             fontWeight: FontWeight.w600,
-//             fontSize: 20,
-//           ),
-//         ),
-//         const Text(
-//           'Show all',
-//           style: TextStyle(
-//             color: Colors.deepPurple,
-//             fontSize: 16,
-//             decoration: TextDecoration.underline,
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-//
-//   Widget _buildHorizontalMovieList(List<String> images,
-//       {required double height, required double width}) {
-//     return SizedBox(
-//       height: height,
-//       child: ListView.builder(
-//         scrollDirection: Axis.horizontal,
-//         itemCount: images.length,
-//         itemBuilder: (context, index) {
-//           return GestureDetector(
-//             onTap: () {
-//               final movie = movieData[index];
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (_) =>
-//                       MovieDetailPage(
-//                         imageUrl: movieImage[index],
-//                         title: movie['title']!,
-//                         director: movie['director']!,
-//                         genre: movie['genre']!,
-//                         year: movie['year']!,
-//                         description: movie['description']!,
-//                       ),
-//                 ),
-//               );
-//             },
-//             child: Container(
-//               width: width,
-//               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-//               child: Card(
-//                 elevation: 5,
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(15),
-//                 ),
-//                 clipBehavior: Clip.antiAlias,
-//                 child: Image.network(
-//                   movieImage[index],
-//                   fit: BoxFit.cover,
-//                 ),
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
+
+Widget _buildMoviesList(List<Movie> movies) {
+  return SizedBox(
+    height: 200,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: movies.length,
+      itemBuilder: (context, index) {
+        final movie = movies[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MovieDetailPage(
+                  imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                  title: movie.title ?? "No title available",
+                  director: "Unknown",
+                  genre: "Genre",
+                  year: movie.releaseDate?.split('-').first ?? "N/A",
+                  description: movie.overview ?? "No description available",
+                ),
+              ),
+            );
+          },
+          child: Container(
+            // width:0,
+            margin: const EdgeInsets.all(8),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: movie.posterPath != null
+                        ? Image.network(
+                      "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace)
+                      {
+                        return const Icon(Icons.broken_image);
+                      },
+                    ) : const Icon(Icons.movie),
+                  ),
+                ),
+                const SizedBox(height: 4),
+
+              ],
+            ),
+
+          ),
+        );
+      },
+    ),
+  );
+}

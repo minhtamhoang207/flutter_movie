@@ -9,11 +9,9 @@ class MovieResponse {
   final int page;
   final List<Movie> results;
 
-  @JsonKey(name: 'total_pages')
-  final int totalPages;
+  @JsonKey(name: 'total_pages') final int totalPages;
 
-  @JsonKey(name: 'total_results')
-  final int totalResults;
+  @JsonKey(name: 'total_results') final int totalResults;
 
   MovieResponse({
     required this.page,

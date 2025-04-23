@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/movie_page.dart';
 
 class MovieDetailPage extends StatelessWidget {
   final String imageUrl;
@@ -24,6 +25,17 @@ class MovieDetailPage extends StatelessWidget {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(title, style: const TextStyle(color: Colors.white)),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.home),
+            ),
+          ),
+        ],
         backgroundColor: Colors.deepPurple,
       ),
       body: SingleChildScrollView(
@@ -51,51 +63,70 @@ class MovieDetailPage extends StatelessWidget {
                   Text("Genre: $genre", style: const TextStyle(fontSize: 16)),
                   Text("Year: $year", style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 10),
-                  Text(description),
+                  // Text(description),
                 ],
               ),
             ),
 
             const SizedBox(height: 20),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.play_arrow, color: Colors.white,),
-                  label: const Text(
-                    "Play",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
 
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.download, color: Colors.white,),
-                  label: const Text(
-                    "Download",
-                    style: TextStyle(
-                      color: Colors.white,
+                      label: const Text(
+                        "Play",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.bookmark, color: Colors.white,),
-                  label: const Text(
-                    "Watchlist",
-                    style: TextStyle(
-                      color: Colors.white,
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+
+                      label: const Text(
+                        "Download",
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.deepPurple,
+                        ),
+                      ),
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                ),
-              ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+
+
+                      label: const Text(
+                        "Watchlist",
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.deepPurple),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 30),
