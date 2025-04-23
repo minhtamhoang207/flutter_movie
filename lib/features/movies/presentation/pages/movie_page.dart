@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
@@ -14,10 +14,8 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
-
   final ApiService apiService = ApiService(getIt<DioClient>().dio);
   List<Movie> trendingMovies = [];
-
 
   // int _selectedIndex = 0;
   //
@@ -102,7 +100,6 @@ class _MoviePageState extends State<MoviePage> {
   //   },
   // ];
 
-
   @override
   void initState() {
     super.initState();
@@ -116,7 +113,7 @@ class _MoviePageState extends State<MoviePage> {
 
   Future<void> fetchTrendingMovies() async {
     try {
-      final response = await apiService.getTrendingMovies("de981511d8d2f3632ce9bef447cec089");
+      final response = await apiService.getTrendingMovies(EnvConfig.apiKey);
       setState(() {
         trendingMovies = response.results;
       });
@@ -143,7 +140,9 @@ class _MoviePageState extends State<MoviePage> {
           ),
         ],
       ),
-      body: trendingMovies.isEmpty ? const Center(child: CircularProgressIndicator()) : _buildTrendingMoviesList(),
+      body: trendingMovies.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : _buildTrendingMoviesList(),
       // pages[_selectedIndex],
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: _selectedIndex,
@@ -153,8 +152,8 @@ class _MoviePageState extends State<MoviePage> {
       //     setState(() {
       //       _selectedIndex = index;
       //     }
-        );
-        }
+    );
+  }
   //       items: const [
   //         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
   //         BottomNavigationBarItem(icon: Icon(Icons.download), label: 'Downloads'),
@@ -178,7 +177,7 @@ class _MoviePageState extends State<MoviePage> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => MovieDetailPage(
-                    imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                    imageUrl: "${EnvConfig.imageBaseUrl}${movie.posterPath}",
                     title: movie.title,
                     director: "Unknown",
                     genre: "Genre",
@@ -194,7 +193,7 @@ class _MoviePageState extends State<MoviePage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                  "${EnvConfig.imageBaseUrl}${movie.posterPath}",
                   fit: BoxFit.cover,
                 ),
               ),
@@ -205,9 +204,6 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 }
-
-
-
 
 // Widget _buildHomePage() {
 //     return Padding(

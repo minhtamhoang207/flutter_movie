@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/core/config/env_config.dart';
 
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EnvConfig.init();
   await Injection.init();
   runApp(const MyApp());
 }
