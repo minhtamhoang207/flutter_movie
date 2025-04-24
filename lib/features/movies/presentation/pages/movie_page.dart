@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
-import 'package:flutter_movie/features/movies/data/models/movie.dart';
-import 'package:flutter_movie/features/movies/presentation/pages/account_page.dart';
+import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/profile_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
 
 class MoviePage extends StatefulWidget {
@@ -240,14 +239,15 @@ class _MoviePageState extends State<MoviePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => MovieDetailPage(
-                    imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                    title: movie.title ?? "No title avaiable",
-                    director: "Unknown",
-                    genre: "Genre",
-                    year: movie.releaseDate?.split('-').first ?? "N/A",
-                    description: movie.overview ?? "No description available",
-                  ),
+                  builder: (_) => MovieDetailPage(movie: movie),
+                  // builder: (_) => MovieDetailPage(
+                  //   imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                  //   title: movie.title ?? "No title avaiable",
+                  //   director: "Unknown",
+                  //   genre: "Genre",
+                  //   year: movie.releaseDate?.split('-').first ?? "N/A",
+                  //   description: movie.overview ?? "No description available",
+                  // ),
                 ),
               );
             },
@@ -296,14 +296,15 @@ Widget _buildMoviesList(List<Movie> movies) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => MovieDetailPage(
-                  imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                  title: movie.title ?? "No title available",
-                  director: "Unknown",
-                  genre: "Genre",
-                  year: movie.releaseDate?.split('-').first ?? "N/A",
-                  description: movie.overview ?? "No description available",
-                ),
+                builder: (_) => MovieDetailPage(movie: movie),
+                // builder: (_) => MovieDetailPage(
+                //   imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                //   title: movie.title ?? "No title available",
+                //   director: "Unknown",
+                //   genre: "Genre",
+                //   year: movie.releaseDate?.split('-').first ?? "N/A",
+                //   description: movie.overview ?? "No description available",
+                // ),
               ),
             );
           },

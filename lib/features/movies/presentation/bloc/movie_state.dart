@@ -1,57 +1,58 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
 
-abstract class MovieState extends Equatable
-{
+abstract class MovieState extends Equatable {
   const MovieState();
 
   @override
   List<Object> get props => [];
 }
 
-class MovieInitial extends MovieState {
+class MovieInitial extends MovieState {}
 
-}
+class MovieLoading extends MovieState {}
 
-class MovieLoading extends MovieState {
+class MovieError extends MovieState {
+  final String message;
 
-}
-
-class MovieLoaded extends MovieState {
-  final List<String> featuredMovies;
-  final List<String> trendingMovies;
-  final List<String> newMovies;
-  final List<String> genres;
-
-  const MovieLoaded ({
-    required this.featuredMovies,
-    required this.trendingMovies,
-    required this.newMovies,
-    required this.genres,
-}
-);
-
-  @override
-  List<Object> get props => [featuredMovies, trendingMovies, newMovies, genres];
-}
-
-
-class MovieError extends MovieState
-{
-  final String  message;
-  const MovieError(this.message);
+  const MovieError({required this.message});
 
   @override
   List<Object> get props => [message];
 }
 
+class MovieLoaded extends MovieState {
+  final List<Movie> trendingMovies;
+  final List<Movie> popularMovies;
+  final List<Movie> nowPlayingMovies;
 
 
+  const MovieLoaded({
+    required this.trendingMovies,
+    required this.popularMovies,
+    required this.nowPlayingMovies,
 
-class NavigationState extends Equatable
-{
-  final int currentIndex;
-  const NavigationState(this.currentIndex);
+  });
+
+  MovieLoaded copyWith({
+    List<Movie>? trendingMovies,
+    List<Movie>? popularMovies,
+    List<Movie>? nowPlayingMovies,
+
+  }) {
+    return MovieLoaded(
+      trendingMovies: trendingMovies ?? this.trendingMovies,
+      popularMovies: popularMovies ?? this.popularMovies,
+      nowPlayingMovies: nowPlayingMovies ?? this.nowPlayingMovies,
+
+    );
+  }
 
   @override
-  List<Object> get props => [currentIndex];
+  List<Object> get props => [
+    trendingMovies,
+    popularMovies,
+    nowPlayingMovies,
+
+  ];
 }

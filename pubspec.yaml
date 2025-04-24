@@ -14,6 +14,7 @@ dependencies:
   # State management
   flutter_bloc:
   equatable:
+  flutter_rating_bar:
 
   # Dependency injection
   get_it: ^7.6.0

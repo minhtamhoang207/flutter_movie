@@ -6,8 +6,8 @@ part of 'movie_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MovieResponse _$MovieResponseFromJson(Map<String, dynamic> json) =>
-    MovieResponse(
+_$MovieResponseImpl _$$MovieResponseImplFromJson(Map<String, dynamic> json) =>
+    _$MovieResponseImpl(
       page: (json['page'] as num).toInt(),
       results: (json['results'] as List<dynamic>)
           .map((e) => Movie.fromJson(e as Map<String, dynamic>))
@@ -16,7 +16,7 @@ MovieResponse _$MovieResponseFromJson(Map<String, dynamic> json) =>
       totalResults: (json['total_results'] as num).toInt(),
     );
 
-Map<String, dynamic> _$MovieResponseToJson(MovieResponse instance) =>
+Map<String, dynamic> _$$MovieResponseImplToJson(_$MovieResponseImpl instance) =>
     <String, dynamic>{
       'page': instance.page,
       'results': instance.results,
