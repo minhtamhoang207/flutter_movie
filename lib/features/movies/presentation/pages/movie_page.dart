@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
@@ -53,9 +54,9 @@ class _MoviePageState extends State<MoviePage> {
 
   Future<void> fetchMovies() async {
     try {
-      final trending = await apiService.getTrendingMovies("a7d334a9e6ddb9ac1be335a7e3976f4f");
-      final popular = await apiService.getPopularMovies("a7d334a9e6ddb9ac1be335a7e3976f4f");
-      final nowPlaying = await apiService.getNowPlayingMovies("a7d334a9e6ddb9ac1be335a7e3976f4f");
+      final trending = await apiService.getTrendingMovies(EnvConfig.apiKey);
+      final popular = await apiService.getPopularMovies(EnvConfig.apiKey);
+      final nowPlaying = await apiService.getNowPlayingMovies(EnvConfig.apiKey);
 
       //de981511d8d2f3632ce9bef447cec089
 

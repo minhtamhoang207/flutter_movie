@@ -1,3 +1,4 @@
+import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
 import 'package:flutter_movie/core/di/injection.dart';
@@ -9,7 +10,7 @@ class MovieRepository {
   Future<List<Movie>> getTrendingMovies() async {
     try {
       final response = await _apiService.getTrendingMovies(
-          "a7d334a9e6ddb9ac1be335a7e3976f4f",);
+          EnvConfig.apiKey,);
       return response.results;
     }
     catch (e)
@@ -22,7 +23,7 @@ class MovieRepository {
   Future<List<Movie>> getPopularMovies() async {
     try {
       final response = await _apiService.getPopularMovies(
-          "a7d334a9e6ddb9ac1be335a7e3976f4f",);
+          EnvConfig.apiKey,);
       return response.results;
     }
     catch (e)
@@ -34,7 +35,7 @@ class MovieRepository {
   Future<List<Movie>> getNowPlayingMovies() async {
     try {
       final response = await _apiService.getNowPlayingMovies(
-          "a7d334a9e6ddb9ac1be335a7e3976f4f",);
+          EnvConfig.apiKey,);
       return response.results;
     }
     catch (e)
