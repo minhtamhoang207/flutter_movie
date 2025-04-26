@@ -1,46 +1,53 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
-import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
 import 'package:flutter_movie/core/di/injection.dart';
+import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
 
-class MovieRepository {
-  final ApiService _apiService = ApiService(getIt<DioClient>().dio);
+abstract class IMovieRepository {
+  Future<List<Movie>> getTrendingMovies();
+  Future<List<Movie>> getPopularMovies();
+  Future<List<Movie>> getNowPlayingMovies();
+}
 
+class MovieRepository implements IMovieRepository {
+  final MovieApi _apiService;
+
+  MovieRepository({required MovieApi apiService}) : _apiService = apiService;
+
+  MovieRepository.internal() : _apiService = MovieApi(getIt<DioClient>().dio);
+
+  @override
   Future<List<Movie>> getTrendingMovies() async {
     try {
-      final response = await _apiService.getTrendingMovies(
-          EnvConfig.apiKey,);
-      return response.results;
+      final response = await _apiService.getTrendingMovies(EnvConfig.apiKey);
+      return response.results ?? [];
+    } catch (e) {
+      debugPrint('Failed to fetch trending movies: $e');
+      return [];
     }
-    catch (e)
-    {
-      throw Exception('Failed to fetch trending movies');
-    }
-
   }
 
+  @override
   Future<List<Movie>> getPopularMovies() async {
     try {
-      final response = await _apiService.getPopularMovies(
-          EnvConfig.apiKey,);
-      return response.results;
-    }
-    catch (e)
-    {
-      throw Exception('Failed to fetch popular movies');
+      final response = await _apiService.getPopularMovies(EnvConfig.apiKey);
+      return response.results ?? [];
+    } catch (e) {
+      debugPrint('Failed to fetch popular movies: $e');
+      return [];
     }
   }
 
+  @override
   Future<List<Movie>> getNowPlayingMovies() async {
     try {
-      final response = await _apiService.getNowPlayingMovies(
-          EnvConfig.apiKey,);
-      return response.results;
-    }
-    catch (e)
-    {
-      throw Exception('Failed to fetch now playing movies');
+      final response = await _apiService.getNowPlayingMovies(EnvConfig.apiKey);
+      return response.results ?? [];
+    } catch (e) {
+      debugPrint('Failed to fetch now playing movies: $e');
+      return [];
     }
   }
 }

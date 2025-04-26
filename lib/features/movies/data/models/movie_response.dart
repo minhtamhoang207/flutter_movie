@@ -6,15 +6,13 @@ part 'movie_response.freezed.dart';
 
 @freezed
 class MovieResponse with _$MovieResponse {
-  const factory MovieResponse ({
-  required int page,
-  required List<Movie> results,
-
-  @JsonKey(name: 'total_pages') required int totalPages,
-  @JsonKey(name: 'total_results') required int totalResults,
-
+  const factory MovieResponse({
+    int? page,
+    List<Movie>? results,
+    @JsonKey(name: 'total_pages') int? totalPages,
+    @JsonKey(name: 'total_results') int? totalResults,
   }) = _MovieResponse;
 
-  factory MovieResponse.fromJson(Map<String, dynamic> json)
-  => _$MovieResponseFromJson(json);
+  factory MovieResponse.fromJson(Map<String, dynamic> json) =>
+      _$MovieResponseFromJson(json);
 }

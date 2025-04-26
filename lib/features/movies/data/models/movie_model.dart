@@ -15,7 +15,5 @@ class Movie with _$Movie {
     @JsonKey(name: 'vote_average') double? voteAverage,
   }) = _Movie;
 
-
-  factory Movie.fromJson(Map<String, dynamic> json) =>
-      _$MovieFromJson(json);
+  factory Movie.fromJson(Map<String, dynamic> json) => _$MovieFromJson(json);
 }

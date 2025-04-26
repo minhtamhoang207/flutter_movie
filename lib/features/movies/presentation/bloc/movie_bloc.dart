@@ -1,29 +1,36 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie/features/movies/data/repository/movie_repository.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/movie_event.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/movie_state.dart';
 
-class MovieBloc extends Bloc<MovieEvent, MovieState> {
-  final MovieRepository movieRepository;
 
-  MovieBloc({required this.movieRepository}) : super(MovieInitial()) {
+class MovieBloc extends Bloc<MovieEvent, MovieState> {
+  final IMovieRepository movieRepository;
+
+  MovieBloc({required this.movieRepository}) : super(const MovieState.initial()) {
     on<FetchMovies>(_onFetchMovies);
   }
+  FutureOr<void> _onFetchMovies(
+      FetchMovies event,
+      Emitter<MovieState> emit,
+      ) async {
+    emit(const MovieState.loading());
 
-  Future<void> _onFetchMovies(FetchMovies event, Emitter<MovieState> emit) async {
-    emit(MovieLoading());
     try {
-      final trending = await movieRepository.getTrendingMovies();
-      final popular = await movieRepository.getPopularMovies();
-      final nowPlaying = await movieRepository.getNowPlayingMovies();
+      final [trending, popular, nowPlaying] = await Future.wait([
+        movieRepository.getTrendingMovies(),
+        movieRepository.getPopularMovies(),
+        movieRepository.getNowPlayingMovies(),
+      ]);
 
-      emit(MovieLoaded(
+      emit(MovieState.loaded(
         trendingMovies: trending,
         popularMovies: popular,
         nowPlayingMovies: nowPlaying,
       ),);
     } catch (e) {
-      emit(MovieError(message: e.toString()));
+      emit(MovieState.error(e.toString()));
     }
   }
 }

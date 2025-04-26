@@ -8,25 +8,6 @@ class MovieDetailPage extends StatelessWidget {
   final Movie movie;
   
   const MovieDetailPage({super.key, required this.movie});
-  
-  
-  // final String imageUrl;
-  // final String title;
-  // final String director;
-  // final String genre;
-  // final String year;
-  // final String description;
-  //
-  // const MovieDetailPage({
-  //   super.key,
-  //   required this.imageUrl,
-  //   required this.title,
-  //   required this.director,
-  //   required this.genre,
-  //   required this.year,
-  //   required this.description,
-  // });
-
   @override
   Widget build(BuildContext context) {
 

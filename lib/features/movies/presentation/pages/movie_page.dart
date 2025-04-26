@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
-import 'package:flutter_movie/core/network/api_service.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
+import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/profile_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
@@ -15,15 +15,13 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
-
-  final ApiService apiService = ApiService(getIt<DioClient>().dio);
+  final MovieApi apiService = MovieApi(getIt<DioClient>().dio);
   List<Movie> trendingMovies = [];
   List<Movie> popularMovies = [];
   List<Movie> nowPlayingMovies = [];
   bool isLoading = true;
   int _selectedIndex = 0;
   String selectedGenre = 'All';
-
 
   void _onItemTapped(int index) {
     setState(() {
@@ -44,12 +42,10 @@ class _MoviePageState extends State<MoviePage> {
     'Animation',
   ];
 
-
   @override
   void initState() {
     super.initState();
     fetchMovies();
-
   }
 
   Future<void> fetchMovies() async {
@@ -61,13 +57,12 @@ class _MoviePageState extends State<MoviePage> {
       //de981511d8d2f3632ce9bef447cec089
 
       setState(() {
-        trendingMovies = trending.results;
-        popularMovies = popular.results;
-        nowPlayingMovies = nowPlaying.results;
+        trendingMovies = trending.results ?? [];
+        popularMovies = popular.results ?? [];
+        nowPlayingMovies = nowPlaying.results ?? [];
         isLoading = false;
       });
-    }
-    catch (e) {
+    } catch (e) {
       debugPrint('Error fetching movies: $e');
       setState(() {
         isLoading = false;
@@ -84,53 +79,56 @@ class _MoviePageState extends State<MoviePage> {
           children: [
             const SizedBox(height: 5),
             _buildGenreChips(),
-
-
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:[
+                children: [
                   _buildSectionTitle("Trending Movies"),
-                  const Text('Show All', style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 14,
-                    decoration: TextDecoration.underline,
-                  ),),
+                  const Text(
+                    'Show All',
+                    style: TextStyle(
+                      color: Colors.deepPurple,
+                      fontSize: 14,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ],
               ),
             ),
             _buildTrendingMoviesList(trendingMovies),
-
-
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:[
+                children: [
                   _buildSectionTitle("Popular Movies"),
-                  const Text('Show All', style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 14,
-                    decoration: TextDecoration.underline,
-                  ),),
+                  const Text(
+                    'Show All',
+                    style: TextStyle(
+                      color: Colors.deepPurple,
+                      fontSize: 14,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ],
               ),
             ),
             _buildMoviesList(popularMovies),
-
-
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:[
+                children: [
                   _buildSectionTitle("Now Playing Movies"),
-                  const Text('Show All', style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 14,
-                    decoration: TextDecoration.underline,
-                  ),),
+                  const Text(
+                    'Show All',
+                    style: TextStyle(
+                      color: Colors.deepPurple,
+                      fontSize: 14,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -138,12 +136,13 @@ class _MoviePageState extends State<MoviePage> {
           ],
         ),
       ),
-      const Center(child: Text('Download'),),
-      const AccountPage(),
+      const Center(
+        child: Text('Download'),
+      ),
+      const ProfilePage(),
     ];
 
-
-      return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Movie App',
@@ -160,7 +159,9 @@ class _MoviePageState extends State<MoviePage> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(),)
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
           : pages[_selectedIndex], // Use pages here
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -169,13 +170,14 @@ class _MoviePageState extends State<MoviePage> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.download), label: 'Downloads'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My Account'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.download), label: 'Downloads'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: 'My Account'),
         ],
       ),
     );
   }
-
 
   Widget _buildGenreChips() {
     return SizedBox(
@@ -192,16 +194,15 @@ class _MoviePageState extends State<MoviePage> {
               label: Text(
                 genre,
                 style: const TextStyle(
-                    color: Colors.white,
+                  color: Colors.white,
                 ),
               ),
-
               backgroundColor: Colors.deepPurple,
               labelStyle: TextStyle(
                 color: selectedGenre == genre ? Colors.white : Colors.black,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)
+                borderRadius: BorderRadius.circular(30),
               ),
             ),
           );
@@ -209,7 +210,6 @@ class _MoviePageState extends State<MoviePage> {
       ),
     );
   }
-
 
   Widget _buildSectionTitle(String title) {
     return Padding(
@@ -225,8 +225,6 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 
-
-
   Widget _buildTrendingMoviesList(List<Movie> movies) {
     return SizedBox(
       height: 250,
@@ -241,14 +239,6 @@ class _MoviePageState extends State<MoviePage> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => MovieDetailPage(movie: movie),
-                  // builder: (_) => MovieDetailPage(
-                  //   imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                  //   title: movie.title ?? "No title avaiable",
-                  //   director: "Unknown",
-                  //   genre: "Genre",
-                  //   year: movie.releaseDate?.split('-').first ?? "N/A",
-                  //   description: movie.overview ?? "No description available",
-                  // ),
                 ),
               );
             },
@@ -261,20 +251,19 @@ class _MoviePageState extends State<MoviePage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: movie.posterPath != null
-              ? Image.network(
-                        "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace)
-                        {
-                          return const Icon(Icons.broken_image);
-                        },
-                      ) : const Icon(Icons.movie),
-                      ),
+                          ? Image.network(
+                              "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.broken_image);
+                              },
+                            )
+                          : const Icon(Icons.movie),
                     ),
-                    const SizedBox(height: 4),
+                  ),
+                  const SizedBox(height: 4),
                 ],
               ),
-
             ),
           );
         },
@@ -282,7 +271,6 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 }
-
 
 Widget _buildMoviesList(List<Movie> movies) {
   return SizedBox(
@@ -298,14 +286,6 @@ Widget _buildMoviesList(List<Movie> movies) {
               context,
               MaterialPageRoute(
                 builder: (_) => MovieDetailPage(movie: movie),
-                // builder: (_) => MovieDetailPage(
-                //   imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                //   title: movie.title ?? "No title available",
-                //   director: "Unknown",
-                //   genre: "Genre",
-                //   year: movie.releaseDate?.split('-').first ?? "N/A",
-                //   description: movie.overview ?? "No description available",
-                // ),
               ),
             );
           },
@@ -319,20 +299,18 @@ Widget _buildMoviesList(List<Movie> movies) {
                     borderRadius: BorderRadius.circular(12),
                     child: movie.posterPath != null
                         ? Image.network(
-                      "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace)
-                      {
-                        return const Icon(Icons.broken_image);
-                      },
-                    ) : const Icon(Icons.movie),
+                            "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.broken_image);
+                            },
+                          )
+                        : const Icon(Icons.movie),
                   ),
                 ),
                 const SizedBox(height: 4),
-
               ],
             ),
-
           ),
         );
       },

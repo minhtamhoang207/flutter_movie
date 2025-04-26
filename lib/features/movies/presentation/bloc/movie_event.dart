@@ -1,11 +1,8 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'movie_event.freezed.dart';
 
-abstract class MovieEvent extends Equatable {
-  const MovieEvent();
-
-  @override
-  List<Object> get props => [];
+@freezed
+class MovieEvent with _$MovieEvent {
+  const factory MovieEvent.fetchMovies() = FetchMovies;
 }
-
-class FetchMovies extends MovieEvent {}
