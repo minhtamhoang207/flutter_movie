@@ -59,7 +59,7 @@ class _MovieApi implements MovieApi {
     )
             .compose(
               _dio.options,
-              '/movie/popular',
+              '/trending/all/day',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -86,7 +86,40 @@ class _MovieApi implements MovieApi {
     )
             .compose(
               _dio.options,
-              '/movie/now_playing',
+              '/trending/tv/day',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = MovieResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<MovieResponse> getSearchMovies(
+    String apiKey,
+    String query,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'api_key': apiKey,
+      r'query': query,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<MovieResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/search/movie',
               queryParameters: queryParameters,
               data: _data,
             )
