@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
@@ -54,12 +56,14 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
+        iconTheme: const IconThemeData(color: AppColors.white),
+        title: Text(
           'Search Movies',
-          style: TextStyle(color: Colors.white),
+          style: AppStyles.s18w700.copyWith(
+            color: AppColors.white,
+          ),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: AppColors.primary,
       ),
       body: Column(
         children: [
@@ -70,18 +74,29 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
               decoration: InputDecoration(
                 hintText: 'Search for a movie...',
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
+                  icon: const Icon(Icons.search, color: AppColors.primary),
                   onPressed: () {
                     _searchMovies(_controller.text.trim());
                   },
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 2.0,
+                  ),
                 ),
-                filled: true,
-                fillColor: Colors.white,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+                filled: false,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 20,
+                  vertical: 16,
                 ),
               ),
               textInputAction: TextInputAction.search,
@@ -107,7 +122,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
       return const Center(
         child: Text(
           'Enter a movie title to search',
-          style: TextStyle(fontSize: 16),
+          style: AppStyles.s16w400,
         ),
       );
     }
@@ -116,7 +131,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
       return Center(
         child: Text(
           'No results for "$_currentQuery"',
-          style: const TextStyle(fontSize: 16),
+          style: AppStyles.s16w400,
         ),
       );
     }
@@ -165,10 +180,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                       children: [
                         Text(
                           movie.title ?? 'No title',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppStyles.s18w700,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -178,9 +190,8 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                                   movie.releaseDate!.length >= 4)
                               ? movie.releaseDate!.substring(0, 4)
                               : 'Unknown Year',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
+                          style: AppStyles.s14w400.copyWith(
+                            color: AppColors.grey,
                           ),
                         ),
                       ],

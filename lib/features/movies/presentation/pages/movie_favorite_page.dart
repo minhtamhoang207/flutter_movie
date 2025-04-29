@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_state.dart';
@@ -14,17 +16,22 @@ class FavoritePage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.deepPurple,
-            title: const Text(
+            backgroundColor: AppColors.primary,
+            title: Text(
               'Favorites',
-              style: TextStyle(
-                color: Colors.white,
+              style: AppStyles.s20w700.copyWith(
+                color: AppColors.white,
               ),
             ),
           ),
           body: state.favorites.isEmpty
-              ? const Center(
-                  child: Text('No favorite movies yet'),
+              ? Center(
+                  child: Text(
+                    'No favorite movies yet',
+                    style: AppStyles.s16w400.copyWith(
+                      color: AppColors.grey,
+                    ),
+                  ),
                 )
               : ListView.builder(
                   itemCount: state.favorites.length,
@@ -44,7 +51,7 @@ class FavoritePage extends StatelessWidget {
                           horizontal: 16,
                           vertical: 8,
                         ),
-                        elevation: 4,
+                        elevation: 2,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -83,9 +90,8 @@ class FavoritePage extends StatelessWidget {
                                     children: [
                                       Text(
                                         movie.title ?? 'No title',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                                        style: AppStyles.s18w700.copyWith(
+                                          color: AppColors.black,
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -96,9 +102,8 @@ class FavoritePage extends StatelessWidget {
                                                 movie.releaseDate!.length >= 4)
                                             ? movie.releaseDate!.substring(0, 4)
                                             : 'Unknown Year',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
+                                        style: AppStyles.s14w400.copyWith(
+                                          color: AppColors.grey,
                                         ),
                                       ),
                                     ],
@@ -108,7 +113,7 @@ class FavoritePage extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(
                                   Icons.favorite,
-                                  color: Colors.red,
+                                  color: AppColors.favorite,
                                 ),
                                 onPressed: () {
                                   context

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
@@ -22,10 +24,12 @@ class MovieDetailPage extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: AppColors.white),
             title: Text(
               movie.title ?? 'Movie Detail',
-              style: const TextStyle(color: Colors.white),
+              style: AppStyles.s18w700.copyWith(
+                color: AppColors.white,
+              ),
             ),
             actions: [
               Padding(
@@ -40,7 +44,7 @@ class MovieDetailPage extends StatelessWidget {
                   },
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : Colors.white,
+                    color: isFavorite ? AppColors.favorite : AppColors.white,
                   ),
                 ),
               ),
@@ -73,11 +77,11 @@ class MovieDetailPage extends StatelessWidget {
                     children: [
                       Text(
                         "Year: ${movie.releaseDate?.split('-').first ?? 'N/A'}",
-                        style: const TextStyle(fontSize: 16),
+                        style: AppStyles.s16w400,
                       ),
                       Text(
                         "Rating: ${movie.voteAverage?.toStringAsFixed(1) ?? 'N/A'}",
-                        style: const TextStyle(fontSize: 16),
+                        style: AppStyles.s16w400,
                       ),
                       const SizedBox(height: 10),
                       RatingBarIndicator(
@@ -86,7 +90,7 @@ class MovieDetailPage extends StatelessWidget {
                             : 0,
                         itemBuilder: (context, index) => const Icon(
                           Icons.star,
-                          color: Colors.amber,
+                          color: AppColors.yellow,
                         ),
                         itemCount: 5,
                         itemSize: 24.0,
@@ -102,11 +106,14 @@ class MovieDetailPage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.play_arrow, color: Colors.white),
-                        label: const Text("Play",
-                            style: TextStyle(color: Colors.white),),
+                        icon: const Icon(Icons.play_arrow,
+                            color: AppColors.white),
+                        label: const Text(
+                          "Play",
+                          style: TextStyle(color: AppColors.white),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
+                          backgroundColor: AppColors.primary,
                         ),
                       ),
                     ),
@@ -115,12 +122,14 @@ class MovieDetailPage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.download,
-                            color: Colors.deepPurple,),
+                        icon: const Icon(
+                          Icons.download,
+                          color: AppColors.primary,
+                        ),
                         label: const Text("Download"),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.deepPurple),
+                          backgroundColor: AppColors.white,
+                          side: const BorderSide(color: AppColors.primary),
                         ),
                       ),
                     ),
@@ -129,30 +138,31 @@ class MovieDetailPage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.bookmark_border,
-                            color: Colors.deepPurple,),
+                        icon: const Icon(
+                          Icons.bookmark_border,
+                          color: AppColors.primary,
+                        ),
                         label: const Text("Watchlist"),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.deepPurple),
+                          backgroundColor: AppColors.white,
+                          side: const BorderSide(color: AppColors.primary),
                         ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 30),
-                const Text(
+                Text(
                   "About Movie",
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,),
+                  style: AppStyles.s20w700.copyWith(
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   movie.overview ?? "No description available.",
                   textAlign: TextAlign.justify,
-                  style: const TextStyle(fontSize: 16),
+                  style: AppStyles.s16w400,
                 ),
               ],
             ),

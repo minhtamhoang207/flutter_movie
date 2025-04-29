@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.d
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_state.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_favorite_page.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/movie_list_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_search_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/profile_page.dart';
 
@@ -44,7 +47,10 @@ class _MoviePageState extends State<MoviePage> {
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favorites',
@@ -118,14 +124,14 @@ class _HomeContentState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
+        iconTheme: const IconThemeData(color: AppColors.white),
+        title: Text(
           'Movie App',
-          style: TextStyle(
-            color: Colors.white,
+          style: AppStyles.s20w700.copyWith(
+            color: AppColors.white,
           ),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: AppColors.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -148,59 +154,11 @@ class _HomeContentState extends State<HomePage> {
                 children: [
                   const SizedBox(height: 5),
                   _buildGenreChips(),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildSectionTitle("Trending Movies"),
-                        const Text(
-                          'Show All',
-                          style: TextStyle(
-                            color: Colors.deepPurple,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildSectionTitle("Trending Movies", trendingMovies),
                   _buildTrendingMoviesList(trendingMovies),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildSectionTitle("Popular Movies"),
-                        const Text(
-                          'Show All',
-                          style: TextStyle(
-                            color: Colors.deepPurple,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildSectionTitle("Popular Movies", popularMovies),
                   _buildMoviesList(popularMovies),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildSectionTitle("Now Playing Movies"),
-                        const Text(
-                          'Show All',
-                          style: TextStyle(
-                            color: Colors.deepPurple,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildSectionTitle("Now Playing Movies", nowPlayingMovies),
                   _buildMoviesList(nowPlayingMovies),
                 ],
               ),
@@ -227,9 +185,10 @@ class _HomeContentState extends State<HomePage> {
                   selectedGenre = selected ? genre : 'All';
                 });
               },
-              selectedColor: Colors.deepPurple,
+              selectedColor: AppColors.primary,
               labelStyle: TextStyle(
-                color: selectedGenre == genre ? Colors.white : Colors.black,
+                color:
+                    selectedGenre == genre ? AppColors.white : AppColors.black,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
@@ -241,16 +200,39 @@ class _HomeContentState extends State<HomePage> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, List<Movie> movies) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.deepPurple,
-          fontWeight: FontWeight.w600,
-          fontSize: 20,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: AppStyles.s20w700.copyWith(
+              color: AppColors.primary,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MovieListPage(
+                    title: title,
+                    movies: movies,
+                  ),
+                ),
+              );
+            },
+            child: Text(
+              'show all',
+              style: AppStyles.s14w400.copyWith(
+                color: AppColors.primary,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -288,7 +270,6 @@ class _HomeContentState extends State<HomePage> {
   Widget _buildMovieCard(Movie movie, double width, bool isTrending) {
     return BlocBuilder<FavoritesBloc, FavoritesState>(
       builder: (context, state) {
-        // state.favorites.any((mv) => mv.id == movie.id);
         return GestureDetector(
           onTap: () {
             Navigator.push(

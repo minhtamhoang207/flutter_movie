@@ -23,6 +23,7 @@ mixin _$Movie {
   int? get id => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get overview => throw _privateConstructorUsedError;
+  List<int>? get genreIds => throw _privateConstructorUsedError;
   @JsonKey(name: 'poster_path')
   String? get posterPath => throw _privateConstructorUsedError;
   @JsonKey(name: 'backdrop_path')
@@ -50,6 +51,7 @@ abstract class $MovieCopyWith<$Res> {
       {int? id,
       String? title,
       String? overview,
+      List<int>? genreIds,
       @JsonKey(name: 'poster_path') String? posterPath,
       @JsonKey(name: 'backdrop_path') String? backdropPath,
       @JsonKey(name: 'release_date') String? releaseDate,
@@ -74,6 +76,7 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
     Object? id = freezed,
     Object? title = freezed,
     Object? overview = freezed,
+    Object? genreIds = freezed,
     Object? posterPath = freezed,
     Object? backdropPath = freezed,
     Object? releaseDate = freezed,
@@ -92,6 +95,10 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
           ? _value.overview
           : overview // ignore: cast_nullable_to_non_nullable
               as String?,
+      genreIds: freezed == genreIds
+          ? _value.genreIds
+          : genreIds // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
       posterPath: freezed == posterPath
           ? _value.posterPath
           : posterPath // ignore: cast_nullable_to_non_nullable
@@ -123,6 +130,7 @@ abstract class _$$MovieImplCopyWith<$Res> implements $MovieCopyWith<$Res> {
       {int? id,
       String? title,
       String? overview,
+      List<int>? genreIds,
       @JsonKey(name: 'poster_path') String? posterPath,
       @JsonKey(name: 'backdrop_path') String? backdropPath,
       @JsonKey(name: 'release_date') String? releaseDate,
@@ -145,6 +153,7 @@ class __$$MovieImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? title = freezed,
     Object? overview = freezed,
+    Object? genreIds = freezed,
     Object? posterPath = freezed,
     Object? backdropPath = freezed,
     Object? releaseDate = freezed,
@@ -163,6 +172,10 @@ class __$$MovieImplCopyWithImpl<$Res>
           ? _value.overview
           : overview // ignore: cast_nullable_to_non_nullable
               as String?,
+      genreIds: freezed == genreIds
+          ? _value._genreIds
+          : genreIds // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
       posterPath: freezed == posterPath
           ? _value.posterPath
           : posterPath // ignore: cast_nullable_to_non_nullable
@@ -190,10 +203,12 @@ class _$MovieImpl implements _Movie {
       {this.id,
       this.title,
       this.overview,
+      final List<int>? genreIds,
       @JsonKey(name: 'poster_path') this.posterPath,
       @JsonKey(name: 'backdrop_path') this.backdropPath,
       @JsonKey(name: 'release_date') this.releaseDate,
-      @JsonKey(name: 'vote_average') this.voteAverage});
+      @JsonKey(name: 'vote_average') this.voteAverage})
+      : _genreIds = genreIds;
 
   factory _$MovieImpl.fromJson(Map<String, dynamic> json) =>
       _$$MovieImplFromJson(json);
@@ -204,6 +219,16 @@ class _$MovieImpl implements _Movie {
   final String? title;
   @override
   final String? overview;
+  final List<int>? _genreIds;
+  @override
+  List<int>? get genreIds {
+    final value = _genreIds;
+    if (value == null) return null;
+    if (_genreIds is EqualUnmodifiableListView) return _genreIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey(name: 'poster_path')
   final String? posterPath;
@@ -219,7 +244,7 @@ class _$MovieImpl implements _Movie {
 
   @override
   String toString() {
-    return 'Movie(id: $id, title: $title, overview: $overview, posterPath: $posterPath, backdropPath: $backdropPath, releaseDate: $releaseDate, voteAverage: $voteAverage)';
+    return 'Movie(id: $id, title: $title, overview: $overview, genreIds: $genreIds, posterPath: $posterPath, backdropPath: $backdropPath, releaseDate: $releaseDate, voteAverage: $voteAverage)';
   }
 
   @override
@@ -231,6 +256,7 @@ class _$MovieImpl implements _Movie {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.overview, overview) ||
                 other.overview == overview) &&
+            const DeepCollectionEquality().equals(other._genreIds, _genreIds) &&
             (identical(other.posterPath, posterPath) ||
                 other.posterPath == posterPath) &&
             (identical(other.backdropPath, backdropPath) ||
@@ -243,8 +269,16 @@ class _$MovieImpl implements _Movie {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, title, overview, posterPath,
-      backdropPath, releaseDate, voteAverage);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      overview,
+      const DeepCollectionEquality().hash(_genreIds),
+      posterPath,
+      backdropPath,
+      releaseDate,
+      voteAverage);
 
   /// Create a copy of Movie
   /// with the given fields replaced by the non-null parameter values.
@@ -267,6 +301,7 @@ abstract class _Movie implements Movie {
       {final int? id,
       final String? title,
       final String? overview,
+      final List<int>? genreIds,
       @JsonKey(name: 'poster_path') final String? posterPath,
       @JsonKey(name: 'backdrop_path') final String? backdropPath,
       @JsonKey(name: 'release_date') final String? releaseDate,
@@ -280,6 +315,8 @@ abstract class _Movie implements Movie {
   String? get title;
   @override
   String? get overview;
+  @override
+  List<int>? get genreIds;
   @override
   @JsonKey(name: 'poster_path')
   String? get posterPath;

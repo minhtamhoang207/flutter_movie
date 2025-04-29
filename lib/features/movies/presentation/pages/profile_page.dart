@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -7,11 +9,11 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: const Text(
+        backgroundColor: AppColors.primary,
+        title: Text(
           'Profile',
-          style: TextStyle(
-            color: Colors.white,
+          style: AppStyles.s20w700.copyWith(
+            color: AppColors.white,
           ),
         ),
       ),
@@ -19,35 +21,32 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 60,
                   backgroundImage: NetworkImage(
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAnZO-HbYIOIzEYS_uNiCS2YtyAn53nJeWbw&s',
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Column(
                   children: [
                     Text(
                       'Jeon Jungkook',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
+                      style: AppStyles.s24w700.copyWith(
+                        color: AppColors.primary,
                       ),
                     ),
 
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     // Email
                     Text(
                       'jeonJk@gmail.com',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
+                      style: AppStyles.s16w400.copyWith(
+                        color: AppColors.grey,
                       ),
                     ),
                   ],
@@ -69,7 +68,7 @@ class ProfilePage extends StatelessWidget {
 
   Widget _buildInfoTile(IconData icon, String title) {
     return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
+      leading: Icon(icon, color: AppColors.primary),
       title: Text(title),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: () {},
