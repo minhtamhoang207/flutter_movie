@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_response.dart';
+import 'package:flutter_movie/features/movies/data/models/video_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'movie_api.g.dart';
@@ -26,5 +27,11 @@ abstract class MovieApi {
   Future<MovieResponse> getSearchMovies(
     @Query('api_key') String apiKey,
     @Query('query') String query,
+  );
+
+  @GET('/movie/{movie_id}/videos')
+  Future<VideoResponse> getMovieVideos(
+    @Path('movie_id') int movieId,
+    @Query('api_key') String apiKey,
   );
 }

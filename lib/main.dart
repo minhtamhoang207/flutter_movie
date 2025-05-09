@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
+// import 'package:flutter_movie/features/movies/presentation/pages/animation.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_page.dart';
 
 void main() async {
@@ -31,6 +32,8 @@ class MyApp extends StatelessWidget {
               useMaterial3: true,
             ),
             home: const MoviePage(),
+            // home: const MoviePage(),
+          // home: const ScreenTitle(key: Key('screenTitle'), text: 'Welcome'),
         ),
     );
     //   MaterialApp(

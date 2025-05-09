@@ -9,6 +9,7 @@ abstract class IMovieRepository {
   Future<List<Movie>> getTrendingMovies();
   Future<List<Movie>> getPopularMovies();
   Future<List<Movie>> getNowPlayingMovies();
+
 }
 
 class MovieRepository implements IMovieRepository {
@@ -48,6 +49,25 @@ class MovieRepository implements IMovieRepository {
     } catch (e) {
       debugPrint('Failed to fetch now playing movies: $e');
       return [];
+    }
+  }
+
+  Future<String?> fetchMovieVideoKey(int movieId) async {
+    try {
+      final response = await _apiService.getMovieVideos(movieId, EnvConfig.apiKey);
+
+      final trailer = response.results.firstWhere(
+        (video) => video.site == 'YouTube' && video.type == 'Trailer',
+        orElse: () => response.results.firstWhere(
+          (video) => video.site == 'YouTube',
+          orElse: () => throw Exception('No YouTube videos found'),
+        ),
+      );
+
+      return trailer.key;
+    } catch (e) {
+      debugPrint('Error fetching video: $e');
+      return null;
     }
   }
 }

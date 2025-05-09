@@ -7,7 +7,7 @@ part of 'movie_model.dart';
 // **************************************************************************
 
 _$MovieImpl _$$MovieImplFromJson(Map<String, dynamic> json) => _$MovieImpl(
-      id: (json['id'] as num?)?.toInt(),
+      id: (json['id'] as num).toInt(),
       title: json['title'] as String?,
       overview: json['overview'] as String?,
       genreIds: (json['genreIds'] as List<dynamic>?)
@@ -17,6 +17,8 @@ _$MovieImpl _$$MovieImplFromJson(Map<String, dynamic> json) => _$MovieImpl(
       backdropPath: json['backdrop_path'] as String?,
       releaseDate: json['release_date'] as String?,
       voteAverage: (json['vote_average'] as num?)?.toDouble(),
+      videoKey: json['videoKey'] as String?,
+      isInWatchlist: json['isInWatchlist'] as bool?,
     );
 
 Map<String, dynamic> _$$MovieImplToJson(_$MovieImpl instance) =>
@@ -29,4 +31,6 @@ Map<String, dynamic> _$$MovieImplToJson(_$MovieImpl instance) =>
       'backdrop_path': instance.backdropPath,
       'release_date': instance.releaseDate,
       'vote_average': instance.voteAverage,
+      'videoKey': instance.videoKey,
+      'isInWatchlist': instance.isInWatchlist,
     };
