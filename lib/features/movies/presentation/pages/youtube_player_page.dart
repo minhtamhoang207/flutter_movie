@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePlayerScreen extends StatefulWidget {
@@ -37,12 +39,17 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trailer'),
+        iconTheme: const IconThemeData(color: AppColors.white),
+        backgroundColor: AppColors.primary,
+        title: Text(
+          'Trailer',
+          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+        ),
       ),
       body: Center(
         child: YoutubePlayer(
           controller: _controller,
-          showVideoProgressIndicator: true,
+          showVideoProgressIndicator: false,
           progressIndicatorColor: Colors.amber,
           progressColors: const ProgressBarColors(
             playedColor: Colors.amber,

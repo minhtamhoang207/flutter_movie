@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
 //
 // class AnimationPage extends StatefulWidget {
@@ -72,15 +74,7 @@ class ScreenTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder(
-      child: Center(
-        child: Text(text, style: TextStyle(
-          fontSize: 36,
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-        ),
-        ),
-      ),
-        tween: Tween<double>(begin: 0, end: 1),
+      tween: Tween<double>(begin: 0, end: 1),
         duration: const Duration(milliseconds: 1800),
         builder: (BuildContext context, double _val, Widget? child)
         {
@@ -93,6 +87,14 @@ class ScreenTitle extends StatelessWidget {
             ),
           );
         },
+      child: Center(
+        child: Text(text, style: const TextStyle(
+          fontSize: 36,
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+        ),
+        ),
+      ),
     );
   }
 }

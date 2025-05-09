@@ -37,89 +37,132 @@ class FavoritePage extends StatelessWidget {
                   itemCount: state.favorites.length,
                   itemBuilder: (context, index) {
                     final movie = state.favorites[index];
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
+                    final imageUrl = movie.posterPath != null
+                        ? 'https://image.tmdb.org/t/p/w200${movie.posterPath}'
+                        : null;
+
+                    return Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => MovieDetailPage(movie: movie),
+                            builder: (context) => MovieDetailPage(movie: movie),
                           ),
-                        );
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
                         ),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SizedBox(
-                          height: 130,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  bottomLeft: Radius.circular(12),
+                              Container(
+                                width: 120,
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.grey[200],
                                 ),
-                                child: movie.posterPath != null
-                                    ? Image.network(
-                                        "https://image.tmdb.org/t/p/w185${movie.posterPath}",
-                                        width: 100,
-                                        height: 130,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (
-                                          context,
-                                          error,
-                                          stackTrace,
-                                        ) =>
-                                            const Icon(Icons.movie, size: 50),
-                                      )
-                                    : const Icon(Icons.movie, size: 100),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: imageUrl != null
+                                      ? Image.network(
+                                          imageUrl,
+                                          width: 120,
+                                          height: 180,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => Center(
+                                            child: Icon(
+                                              Icons.broken_image,
+                                              size: 50,
+                                              color: Colors.grey[400],
+                                            ),
+                                          ),
+                                        )
+                                      : Center(
+                                          child: Icon(
+                                            Icons.movie,
+                                            size: 50,
+                                            color: Colors.grey[400],
+                                          ),
+                                        ),
+                                ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        movie.title ?? 'No title',
-                                        style: AppStyles.s18w700.copyWith(
-                                          color: AppColors.black,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      movie.title ?? 'Untitled Movie',
+                                      style: AppStyles.s18w700.copyWith(
+                                        color: AppColors.primary,
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        (movie.releaseDate != null &&
-                                                movie.releaseDate!.length >= 4)
-                                            ? movie.releaseDate!.substring(0, 4)
-                                            : 'Unknown Year',
-                                        style: AppStyles.s14w400.copyWith(
-                                          color: AppColors.grey,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_today,
+                                          size: 16,
+                                          color: Colors.grey[600],
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          movie.releaseDate?.substring(0, 4) ??
+                                              'Year unknown',
+                                          style: AppStyles.s14w400.copyWith(
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star,
+                                          color: AppColors.yellow,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          movie.voteAverage
+                                                  ?.toStringAsFixed(1) ??
+                                              'N/A',
+                                          style: AppStyles.s14w400.copyWith(
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.favorite,
+                                            color: AppColors.favorite,
+                                          ),
+                                          onPressed: () => context
+                                              .read<FavoritesBloc>()
+                                              .add(RemoveFavorite(movie)),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      movie.overview ??
+                                          'No description available',
+                                      style: AppStyles.s14w400
+                                          .copyWith(color: Colors.grey[600]),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.favorite,
-                                  color: AppColors.favorite,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<FavoritesBloc>()
-                                      .add(RemoveFavorite(movie));
-                                },
                               ),
                             ],
                           ),

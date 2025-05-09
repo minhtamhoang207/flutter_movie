@@ -9,7 +9,6 @@ abstract class IMovieRepository {
   Future<List<Movie>> getTrendingMovies();
   Future<List<Movie>> getPopularMovies();
   Future<List<Movie>> getNowPlayingMovies();
-
 }
 
 class MovieRepository implements IMovieRepository {
@@ -54,7 +53,8 @@ class MovieRepository implements IMovieRepository {
 
   Future<String?> fetchMovieVideoKey(int movieId) async {
     try {
-      final response = await _apiService.getMovieVideos(movieId, EnvConfig.apiKey);
+      final response =
+          await _apiService.getMovieVideos(movieId, EnvConfig.apiKey);
 
       final trailer = response.results.firstWhere(
         (video) => video.site == 'YouTube' && video.type == 'Trailer',

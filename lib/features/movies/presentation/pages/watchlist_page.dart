@@ -1,0 +1,182 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie/common/app_theme/app_colors.dart';
+import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
+import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_bloc.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_event.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_state.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
+
+class WatchList extends StatelessWidget {
+  const WatchList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: AppColors.white,
+        ),
+        backgroundColor: AppColors.primary,
+        title: Text(
+          'Watchlist',
+          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+        ),
+      ),
+      body: BlocBuilder<WatchlistBloc, WatchlistState>(
+        builder: (context, state) {
+          return state.when(
+            initial: () => const Center(child: Text('Your watchlist is empty')),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            loaded: (movies) {
+              if (movies.isEmpty) {
+                return const Center(child: Text('Your watchlist is empty'));
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: movies.length,
+                itemBuilder: (context, index) {
+                  final movie = movies[index];
+                  return _buildWatchlistItem(context, movie);
+                },
+              );
+            },
+            error: (message) => Center(child: Text('Error: $message')),
+            isAdded: (_) =>
+                const Center(child: Text('Your watchlist is empty')),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildWatchlistItem(BuildContext context, Movie movie) {
+    final imageUrl = movie.posterPath != null
+        ? 'https://image.tmdb.org/t/p/w200${movie.posterPath}'
+        : null;
+
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.only(bottom: 20),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MovieDetailPage(movie: movie),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 120,
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey[200],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: imageUrl != null
+                      ? Image.network(
+                          imageUrl,
+                          width: 120,
+                          height: 180,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 50,
+                              color: Colors.grey[400],
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.movie,
+                            size: 50,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      movie.title ?? 'Untitled Movie',
+                      style: AppStyles.s18w700.copyWith(
+                        color: AppColors.primary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          movie.releaseDate?.substring(0, 4) ?? 'Year unknown',
+                          style: AppStyles.s14w400
+                              .copyWith(color: Colors.grey[700]),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          color: AppColors.yellow,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          movie.voteAverage?.toStringAsFixed(1) ?? 'N/A',
+                          style: AppStyles.s14w400
+                              .copyWith(color: Colors.grey[700]),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.bookmark,
+                            color: AppColors.primary,
+                          ),
+                          onPressed: () => context
+                              .read<WatchlistBloc>()
+                              .add(WatchlistEvent.remove(movie)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      movie.overview ?? 'No description available',
+                      style:
+                          AppStyles.s14w400.copyWith(color: Colors.grey[600]),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

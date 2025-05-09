@@ -7,7 +7,10 @@ import 'package:flutter_movie/features/movies/data/repository/movie_repository.d
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_state.dart';
-import 'package:flutter_movie/features/movies/presentation/pages/youtube_player_screen.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_bloc.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_event.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_state.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/youtube_player_page.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -20,13 +23,16 @@ class MovieDetailPage extends StatefulWidget {
 }
 
 class _MovieDetailPageState extends State<MovieDetailPage> {
-  late String? _youtubeKey;
+  late String? _videoKey;
 
   @override
   void initState() {
     super.initState();
-    _youtubeKey = widget.movie.videoKey;
-    if (_youtubeKey == null) {
+    _videoKey = widget.movie.videoKey;
+    context.read<WatchlistBloc>().add(
+          WatchlistEvent.checkIfAdded(widget.movie.id),
+        );
+    if (_videoKey == null) {
       _loadVideoKey();
     }
   }
@@ -34,26 +40,27 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Future<void> _loadVideoKey() async {
     try {
       final repository = MovieRepository.internal();
-      final videoKey = await repository.fetchMovieVideoKey(widget.movie.id);
-      setState(() => _youtubeKey = videoKey);
+      final key = await repository.fetchMovieVideoKey(widget.movie.id);
+      setState(() => _videoKey = key);
     } catch (e) {
       debugPrint('Error loading video: $e');
     }
   }
 
   void _onPlayPressed(BuildContext context) {
-    if (_youtubeKey == null) {
+    context.read<WatchlistBloc>().add(WatchlistEvent.add(widget.movie));
+    if (_videoKey == null || _videoKey!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No trailer available'),
         ),
       );
+      return;
     }
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            YoutubePlayerScreen(videoKey: widget.movie.videoKey ?? ''),
+        builder: (context) => YoutubePlayerScreen(videoKey: _videoKey!),
       ),
     );
   }
@@ -63,23 +70,31 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     final imageUrl = widget.movie.backdropPath ?? widget.movie.posterPath;
     final fullImageUrl =
         imageUrl != null ? 'https://image.tmdb.org/t/p/w500$imageUrl' : null;
-    return BlocBuilder<FavoritesBloc, FavoritesState>(
-      builder: (context, state) {
-        final isFavorite = state.favorites.any((m) => m.id == widget.movie.id);
-
-        return Scaffold(
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: AppColors.white),
-            title: Text(
-              widget.movie.title ?? 'Movie Detail',
-              style: AppStyles.s18w700.copyWith(
-                color: AppColors.white,
-              ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: context.read<FavoritesBloc>()),
+        BlocProvider.value(value: context.read<WatchlistBloc>()),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.white),
+          title: Text(
+            widget.movie.title ?? 'Movie Detail',
+            style: AppStyles.s18w700.copyWith(
+              color: AppColors.white,
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: IconButton(
+          ),
+          backgroundColor: AppColors.primary,
+          actions: [
+            BlocBuilder<FavoritesBloc, FavoritesState>(
+              builder: (context, state) {
+                final isFavorite =
+                    state.favorites.any((m) => m.id == widget.movie.id);
+                return IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? AppColors.favorite : AppColors.white,
+                  ),
                   onPressed: () {
                     if (isFavorite) {
                       context
@@ -91,135 +106,186 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           .add(AddFavorite(widget.movie));
                     }
                   },
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? AppColors.favorite : AppColors.white,
-                  ),
-                ),
-              ),
-            ],
-            backgroundColor: Colors.deepPurple,
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (imageUrl != null)
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        fullImageUrl!,
-                        width: 180,
-                        height: 250,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image, size: 180);
-                        },
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 20),
+                );
+              },
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (imageUrl != null)
                 Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        "Year: ${widget.movie.releaseDate?.split('-').first ?? 'N/A'}",
-                        style: AppStyles.s16w400,
-                      ),
-                      Text(
-                        "Rating: ${widget.movie.voteAverage?.toStringAsFixed(1) ?? 'N/A'}",
-                        style: AppStyles.s16w400,
-                      ),
-                      const SizedBox(height: 10),
-                      RatingBarIndicator(
-                        rating: widget.movie.voteAverage != null
-                            ? (widget.movie.voteAverage! / 2)
-                            : 0,
-                        itemBuilder: (context, index) => const Icon(
-                          Icons.star,
-                          color: AppColors.yellow,
-                        ),
-                        itemCount: 5,
-                        itemSize: 24.0,
-                        direction: Axis.horizontal,
-                      ),
-                    ],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      fullImageUrl!,
+                      width: 180,
+                      height: 250,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.broken_image, size: 180);
+                      },
+                    ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                Column(
+              const SizedBox(height: 20),
+              Center(
+                child: Column(
                   children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () => _onPlayPressed(context),
-                        icon: const Icon(
-                          Icons.play_arrow,
-                          color: AppColors.white,
-                        ),
-                        label: const Text(
-                          "Play",
-                          style: TextStyle(color: AppColors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                        ),
-                      ),
+                    Text(
+                      "Year: ${widget.movie.releaseDate?.split('-').first ?? 'N/A'}",
+                      style: AppStyles.s16w400,
+                    ),
+                    Text(
+                      "Rating: ${widget.movie.voteAverage?.toStringAsFixed(1) ?? 'N/A'}",
+                      style: AppStyles.s16w400,
                     ),
                     const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.download,
-                          color: AppColors.primary,
-                        ),
-                        label: const Text("Download"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.white,
-                          side: const BorderSide(color: AppColors.primary),
-                        ),
+                    RatingBarIndicator(
+                      rating: widget.movie.voteAverage != null
+                          ? (widget.movie.voteAverage! / 2)
+                          : 0,
+                      itemBuilder: (context, index) => const Icon(
+                        Icons.star,
+                        color: AppColors.yellow,
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.bookmark_border,
-                          color: AppColors.primary,
-                        ),
-                        label: const Text("Watchlist"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.white,
-                          side: const BorderSide(color: AppColors.primary),
-                        ),
-                      ),
+                      itemCount: 5,
+                      itemSize: 24.0,
+                      direction: Axis.horizontal,
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
-                Text(
-                  "About Movie",
-                  style: AppStyles.s20w700.copyWith(
+              ),
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _onPlayPressed(context),
+                      icon: const Icon(
+                        Icons.play_arrow,
+                        color: AppColors.white,
+                      ),
+                      label: const Text(
+                        "Play",
+                        style: TextStyle(color: AppColors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.download,
+                        color: AppColors.primary,
+                      ),
+                      label: const Text("Download"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.white,
+                        side: const BorderSide(color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildWatchlistButton(context),
+                ],
+              ),
+              const SizedBox(height: 30),
+              Text(
+                "About Movie",
+                style: AppStyles.s20w700.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                widget.movie.overview ?? "No description available.",
+                textAlign: TextAlign.justify,
+                style: AppStyles.s16w400,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWatchlistButton(BuildContext context) {
+    return BlocBuilder<WatchlistBloc, WatchlistState>(
+      builder: (context, state) {
+        return state.when(
+          initial: () => _buildWatchlistButtonContent(context, false),
+          loading: () => const CircularProgressIndicator(),
+          loaded: (movies) {
+            final isInWatchlist = movies.any((m) => m.id == widget.movie.id);
+            return _buildWatchlistButtonContent(context, isInWatchlist);
+          },
+          error: (message) => Text('Error: $message'),
+          isAdded: (isAdded) => _buildWatchlistButtonContent(context, isAdded),
+        );
+      },
+    );
+  }
+
+  Widget _buildWatchlistButtonContent(
+      BuildContext context, bool isInWatchlist) {
+    return BlocBuilder<WatchlistBloc, WatchlistState>(
+      builder: (context, state) {
+        final isLoading = state is Loading;
+
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: isLoading
+                ? null
+                : () => _handleWatchlistAction(context, isInWatchlist),
+            icon: isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
+                  )
+                : Icon(
+                    isInWatchlist ? Icons.bookmark : Icons.bookmark_border,
                     color: AppColors.primary,
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  widget.movie.overview ?? "No description available.",
-                  textAlign: TextAlign.justify,
-                  style: AppStyles.s16w400,
-                ),
-              ],
+            label: isLoading
+                ? const Text("Processing...")
+                : Text(isInWatchlist ? "In Watchlist" : "Add to Watchlist"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.white,
+              side: const BorderSide(color: AppColors.primary),
+              disabledBackgroundColor: Colors.grey[200],
             ),
           ),
         );
       },
     );
+  }
+
+  void _handleWatchlistAction(BuildContext context, bool isInWatchlist) {
+    final movie = widget.movie;
+
+    if (isInWatchlist) {
+      context.read<WatchlistBloc>().add(
+            WatchlistEvent.remove(movie),
+          );
+    } else {
+      context.read<WatchlistBloc>().add(
+            WatchlistEvent.add(movie),
+          );
+    }
   }
 }

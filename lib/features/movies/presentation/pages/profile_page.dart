@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/common/app_theme/app_colors.dart';
 import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
-import 'package:flutter_movie/features/movies/presentation/pages/watchlist.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/help_support_page.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/privacy_policy_page.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/watchlist_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -61,8 +63,22 @@ class ProfilePage extends StatelessWidget {
               );
             }),
             _buildInfoTile(Icons.settings, 'Account Settings', () {}),
-            _buildInfoTile(Icons.help_outline, 'Help & Support', () {}),
-            _buildInfoTile(Icons.privacy_tip, 'Privacy Policy', () {}),
+            _buildInfoTile(Icons.help_outline, 'Help & Support', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpSupportPage(),
+                ),
+              );
+            }),
+            _buildInfoTile(Icons.privacy_tip, 'Privacy Policy', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PrivacyPolicyPage(),
+                ),
+              );
+            }),
             _buildInfoTile(Icons.logout, 'Log Out', () {}),
           ],
         ),
