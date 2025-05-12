@@ -23,16 +23,24 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
       emit(WatchlistState.error('Failed to load watchlist: ${e.toString()}'));
     }
   }
-
   Future<void> _onAdd(Add event, Emitter<WatchlistState> emit) async {
     try {
+      final isAdded = await _repository.isInWatchlist(event.movie.id);
+      if (isAdded) {
+        emit(const WatchlistState.isAdded(true));
+        return;
+      }
+      await _repository.addToWatchlist(event.movie);
       final currentState = state;
       if (currentState is Loaded) {
-        await _repository.addToWatchlist(event.movie);
         final updatedList = [...currentState.movies, event.movie];
         emit(WatchlistState.loaded(updatedList));
-        emit(const WatchlistState.isAdded(true));
+      } else {
+        final movies = await _repository.getWatchlist();
+        emit(WatchlistState.loaded(movies));
       }
+
+      emit(const WatchlistState.isAdded(true));
     } catch (e) {
       emit(WatchlistState.error('Failed to add to watchlist: ${e.toString()}'));
     }
@@ -40,13 +48,17 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
 
   Future<void> _onRemove(Remove event, Emitter<WatchlistState> emit) async {
     try {
+      await _repository.removeFromWatchlist(event.movie.id);
       final currentState = state;
       if (currentState is Loaded) {
-        await _repository.removeFromWatchlist(event.movie.id);
         final updatedList = currentState.movies.where((m) => m.id != event.movie.id).toList();
         emit(WatchlistState.loaded(updatedList));
-        emit(const WatchlistState.isAdded(false));
+      } else {
+        final movies = await _repository.getWatchlist();
+        emit(WatchlistState.loaded(movies));
       }
+
+      emit(const WatchlistState.isAdded(false));
     } catch (e) {
       emit(WatchlistState.error('Failed to remove from watchlist: ${e.toString()}'));
     }

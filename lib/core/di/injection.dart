@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_movie/core/network/dio_client.dart';
 import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/movie_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_movie/features/todo/data/api/todo_api.dart';
 import 'package:flutter_movie/features/todo/data/repositories/todo_repository.dart';
@@ -26,5 +27,6 @@ class Injection {
 
     // BLoCs
     getIt.registerFactory(() => TodoBloc(getIt()));
+    getIt.registerFactory<MovieBloc>(() => MovieBloc(getIt()));
   }
 }

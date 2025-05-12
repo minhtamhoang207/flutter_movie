@@ -13,6 +13,10 @@ class WatchList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<WatchlistBloc>().add(const Load());
+    });
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(
@@ -24,7 +28,16 @@ class WatchList extends StatelessWidget {
           style: AppStyles.s20w700.copyWith(color: AppColors.white),
         ),
       ),
-      body: BlocBuilder<WatchlistBloc, WatchlistState>(
+      body: BlocConsumer<WatchlistBloc, WatchlistState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            error: (message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+            },
+          );
+        },
         builder: (context, state) {
           return state.when(
             initial: () => const Center(child: Text('Your watchlist is empty')),
@@ -33,13 +46,18 @@ class WatchList extends StatelessWidget {
               if (movies.isEmpty) {
                 return const Center(child: Text('Your watchlist is empty'));
               }
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  final movie = movies[index];
-                  return _buildWatchlistItem(context, movie);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<WatchlistBloc>().add(const Load());
                 },
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: movies.length,
+                  itemBuilder: (context, index) {
+                    final movie = movies[index];
+                    return _buildWatchlistItem(context, movie);
+                  },
+                ),
               );
             },
             error: (message) => Center(child: Text('Error: $message')),

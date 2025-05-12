@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie/common/app_theme/app_colors.dart';
 import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
-import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
-import 'package:flutter_movie/core/network/dio_client.dart';
 import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_state.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/movie_bloc.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/movie_event.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/movie_state.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_favorite_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_list_page.dart';
@@ -65,20 +66,21 @@ class _MoviePageState extends State<MoviePage> {
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomeContentState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          MovieBloc(getIt<MovieApi>())..add(const FetchMovies()),
+      child: _HomeContent(),
+    );
+  }
 }
 
-class _HomeContentState extends State<HomePage> {
-  final MovieApi apiService = MovieApi(getIt<DioClient>().dio);
-  List<Movie> trendingMovies = [];
-  List<Movie> popularMovies = [];
-  List<Movie> nowPlayingMovies = [];
-  bool isLoading = true;
-  String selectedGenre = 'All';
+class _HomeContent extends StatelessWidget {
+  _HomeContent();
 
   final List<String> genres = [
     'All',
@@ -95,78 +97,59 @@ class _HomeContentState extends State<HomePage> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    fetchMovies();
-  }
-
-  Future<void> fetchMovies() async {
-    try {
-      final trending = await apiService.getTrendingMovies(EnvConfig.apiKey);
-      final popular = await apiService.getPopularMovies(EnvConfig.apiKey);
-      final nowPlaying = await apiService.getNowPlayingMovies(EnvConfig.apiKey);
-
-      setState(() {
-        trendingMovies = trending.results ?? [];
-        popularMovies = popular.results ?? [];
-        nowPlayingMovies = nowPlaying.results ?? [];
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error fetching movies: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: AppColors.white),
         title: Text(
           'Movie App',
-          style: AppStyles.s20w700.copyWith(
-            color: AppColors.white,
-          ),
+          style: AppStyles.s20w700.copyWith(color: AppColors.white),
         ),
         backgroundColor: AppColors.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MovieSearchPage(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MovieSearchPage()),
+            ),
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 5),
-                  _buildGenreChips(),
-                  _buildSectionTitle("Trending Movies", trendingMovies),
-                  _buildTrendingMoviesList(trendingMovies),
-                  _buildSectionTitle("Popular Movies", popularMovies),
-                  _buildMoviesList(popularMovies),
-                  _buildSectionTitle("Now Playing Movies", nowPlayingMovies),
-                  _buildMoviesList(nowPlayingMovies),
-                ],
-              ),
-            ),
+      body: BlocBuilder<MovieBloc, MovieState>(
+        builder: (context, state) {
+          return state.when(
+            initial: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (message) => Center(child: Text(message)),
+            loaded: (trendingMovies, popularMovies, nowPlayingMovies,
+                selectedGenre) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
+                    _buildGenreChips(context, selectedGenre),
+                    _buildSectionTitle(
+                        context, "Trending Movies", trendingMovies),
+                    _buildTrendingMoviesList(trendingMovies),
+                    _buildSectionTitle(
+                        context, "Popular Movies", popularMovies),
+                    _buildMoviesList(popularMovies),
+                    _buildSectionTitle(
+                        context, "Now Playing Movies", nowPlayingMovies),
+                    _buildMoviesList(nowPlayingMovies),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildGenreChips() {
+  Widget _buildGenreChips(BuildContext context, String selectedGenre) {
     return SizedBox(
       height: 50,
       child: ListView.builder(
@@ -181,11 +164,12 @@ class _HomeContentState extends State<HomePage> {
               label: Text(genre),
               selected: selectedGenre == genre,
               onSelected: (selected) {
-                setState(() {
-                  selectedGenre = selected ? genre : 'All';
-                });
+                context.read<MovieBloc>().add(
+                      ChangeGenre(selected ? genre : 'All'),
+                    );
               },
               selectedColor: AppColors.primary,
+              checkmarkColor: AppColors.white,
               labelStyle: TextStyle(
                 color:
                     selectedGenre == genre ? AppColors.white : AppColors.black,
@@ -200,7 +184,8 @@ class _HomeContentState extends State<HomePage> {
     );
   }
 
-  Widget _buildSectionTitle(String title, List<Movie> movies) {
+  Widget _buildSectionTitle(
+      BuildContext context, String title, List<Movie> movies) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
       child: Row(

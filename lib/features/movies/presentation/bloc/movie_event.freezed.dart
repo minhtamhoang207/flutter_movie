@@ -19,32 +19,38 @@ mixin _$MovieEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchMovies,
+    required TResult Function(String genre) changeGenre,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchMovies,
+    TResult? Function(String genre)? changeGenre,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchMovies,
+    TResult Function(String genre)? changeGenre,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(FetchMovies value) fetchMovies,
+    required TResult Function(ChangeGenre value) changeGenre,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchMovies value)? fetchMovies,
+    TResult? Function(ChangeGenre value)? changeGenre,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchMovies value)? fetchMovies,
+    TResult Function(ChangeGenre value)? changeGenre,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -113,6 +119,7 @@ class _$FetchMoviesImpl implements FetchMovies {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchMovies,
+    required TResult Function(String genre) changeGenre,
   }) {
     return fetchMovies();
   }
@@ -121,6 +128,7 @@ class _$FetchMoviesImpl implements FetchMovies {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchMovies,
+    TResult? Function(String genre)? changeGenre,
   }) {
     return fetchMovies?.call();
   }
@@ -129,6 +137,7 @@ class _$FetchMoviesImpl implements FetchMovies {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchMovies,
+    TResult Function(String genre)? changeGenre,
     required TResult orElse(),
   }) {
     if (fetchMovies != null) {
@@ -141,6 +150,7 @@ class _$FetchMoviesImpl implements FetchMovies {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(FetchMovies value) fetchMovies,
+    required TResult Function(ChangeGenre value) changeGenre,
   }) {
     return fetchMovies(this);
   }
@@ -149,6 +159,7 @@ class _$FetchMoviesImpl implements FetchMovies {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FetchMovies value)? fetchMovies,
+    TResult? Function(ChangeGenre value)? changeGenre,
   }) {
     return fetchMovies?.call(this);
   }
@@ -157,6 +168,7 @@ class _$FetchMoviesImpl implements FetchMovies {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FetchMovies value)? fetchMovies,
+    TResult Function(ChangeGenre value)? changeGenre,
     required TResult orElse(),
   }) {
     if (fetchMovies != null) {
@@ -168,4 +180,144 @@ class _$FetchMoviesImpl implements FetchMovies {
 
 abstract class FetchMovies implements MovieEvent {
   const factory FetchMovies() = _$FetchMoviesImpl;
+}
+
+/// @nodoc
+abstract class _$$ChangeGenreImplCopyWith<$Res> {
+  factory _$$ChangeGenreImplCopyWith(
+          _$ChangeGenreImpl value, $Res Function(_$ChangeGenreImpl) then) =
+      __$$ChangeGenreImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String genre});
+}
+
+/// @nodoc
+class __$$ChangeGenreImplCopyWithImpl<$Res>
+    extends _$MovieEventCopyWithImpl<$Res, _$ChangeGenreImpl>
+    implements _$$ChangeGenreImplCopyWith<$Res> {
+  __$$ChangeGenreImplCopyWithImpl(
+      _$ChangeGenreImpl _value, $Res Function(_$ChangeGenreImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of MovieEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? genre = null,
+  }) {
+    return _then(_$ChangeGenreImpl(
+      null == genre
+          ? _value.genre
+          : genre // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ChangeGenreImpl implements ChangeGenre {
+  const _$ChangeGenreImpl(this.genre);
+
+  @override
+  final String genre;
+
+  @override
+  String toString() {
+    return 'MovieEvent.changeGenre(genre: $genre)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChangeGenreImpl &&
+            (identical(other.genre, genre) || other.genre == genre));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, genre);
+
+  /// Create a copy of MovieEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChangeGenreImplCopyWith<_$ChangeGenreImpl> get copyWith =>
+      __$$ChangeGenreImplCopyWithImpl<_$ChangeGenreImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() fetchMovies,
+    required TResult Function(String genre) changeGenre,
+  }) {
+    return changeGenre(genre);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? fetchMovies,
+    TResult? Function(String genre)? changeGenre,
+  }) {
+    return changeGenre?.call(genre);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? fetchMovies,
+    TResult Function(String genre)? changeGenre,
+    required TResult orElse(),
+  }) {
+    if (changeGenre != null) {
+      return changeGenre(genre);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(FetchMovies value) fetchMovies,
+    required TResult Function(ChangeGenre value) changeGenre,
+  }) {
+    return changeGenre(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(FetchMovies value)? fetchMovies,
+    TResult? Function(ChangeGenre value)? changeGenre,
+  }) {
+    return changeGenre?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(FetchMovies value)? fetchMovies,
+    TResult Function(ChangeGenre value)? changeGenre,
+    required TResult orElse(),
+  }) {
+    if (changeGenre != null) {
+      return changeGenre(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ChangeGenre implements MovieEvent {
+  const factory ChangeGenre(final String genre) = _$ChangeGenreImpl;
+
+  String get genre;
+
+  /// Create a copy of MovieEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ChangeGenreImplCopyWith<_$ChangeGenreImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
