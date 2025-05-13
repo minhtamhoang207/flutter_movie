@@ -12,6 +12,7 @@ class MovieState with _$MovieState {
     required List<Movie> popularMovies,
     required List<Movie> nowPlayingMovies,
     required String selectedGenre,
+    required List<Movie> filteredMovies,
   }) = _Loaded;
   const factory MovieState.error(String message) = _Error;
 }

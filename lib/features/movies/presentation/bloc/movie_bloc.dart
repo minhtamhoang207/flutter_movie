@@ -8,6 +8,19 @@ import 'package:flutter_movie/core/config/env_config.dart';
 
 class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final MovieApi apiService;
+  final Map<String, int> genreMap = {
+    'Action': 28,
+    'Comedy': 35,
+    'Drama': 18,
+    'Horror': 27,
+    'Romance': 10749,
+    'Sci-Fi': 878,
+    'Thriller': 53,
+    'Adventure': 12,
+    'Fantasy': 14,
+    'Animation': 16,
+  };
+
 
   MovieBloc(this.apiService) : super(const MovieState.initial()) {
     on<FetchMovies>(_onFetchMovies);
@@ -29,6 +42,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
         popularMovies: popular.results ?? [],
         nowPlayingMovies: nowPlaying.results ?? [],
         selectedGenre: 'All',
+        filteredMovies: trending.results ?? [],
       ),);
     } catch (e) {
       emit(MovieState.error('Error fetching movies: $e'));
@@ -36,15 +50,30 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   }
 
   void _onChangeGenre(ChangeGenre event, Emitter<MovieState> emit) {
-    state.whenOrNull(
-      loaded: (trendingMovies, popularMovies, nowPlayingMovies, _) {
+    state.maybeWhen(
+      loaded: (trendingMovies, popularMovies, nowPlayingMovies, _, __) {
+          final allMovies = [
+            ...trendingMovies,
+            ...popularMovies,
+            ...nowPlayingMovies,
+          ];
+          final filteredMovies = event.genre == 'All'
+              ? trendingMovies
+              : allMovies.where((movie) {
+            final genreId = genreMap[event.genre];
+            return genreId != null &&
+                (movie.genreIds?.contains(genreId) ?? false);
+          }).toList();
+
         emit(MovieState.loaded(
           trendingMovies: trendingMovies,
           popularMovies: popularMovies,
           nowPlayingMovies: nowPlayingMovies,
           selectedGenre: event.genre,
+          filteredMovies: filteredMovies,
         ),);
       },
+      orElse: (){},
     );
   }
 }

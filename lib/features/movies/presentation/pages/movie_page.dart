@@ -122,23 +122,48 @@ class _HomeContent extends StatelessWidget {
             initial: () => const Center(child: CircularProgressIndicator()),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (message) => Center(child: Text(message)),
-            loaded: (trendingMovies, popularMovies, nowPlayingMovies,
-                selectedGenre) {
+            loaded: (
+              trendingMovies,
+              popularMovies,
+              nowPlayingMovies,
+              selectedGenre,
+              filteredMovies,
+            ) {
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 5),
-                    _buildGenreChips(context, selectedGenre),
-                    _buildSectionTitle(
-                        context, "Trending Movies", trendingMovies),
-                    _buildTrendingMoviesList(trendingMovies),
-                    _buildSectionTitle(
-                        context, "Popular Movies", popularMovies),
-                    _buildMoviesList(popularMovies),
-                    _buildSectionTitle(
-                        context, "Now Playing Movies", nowPlayingMovies),
-                    _buildMoviesList(nowPlayingMovies),
+
+                      _buildGenreChips(context, selectedGenre),
+                    if (selectedGenre == 'All') ...[
+                      _buildSectionTitle(
+                        context,
+                        "Trending Movies",
+                        trendingMovies,
+                      ),
+                      _buildTrendingMoviesList(trendingMovies),
+                      _buildSectionTitle(
+                        context,
+                        "Popular Movies",
+                        popularMovies,
+                      ),
+                      _buildMoviesList(popularMovies),
+                      _buildSectionTitle(
+                        context,
+                        "Now Playing Movies",
+                        nowPlayingMovies,
+                      ),
+                      _buildMoviesList(nowPlayingMovies),
+                    ] else if (filteredMovies.isNotEmpty) ...[
+                      _buildSectionTitle(context, "$selectedGenre Movies", filteredMovies),
+                      _buildMoviesList(filteredMovies),
+                    ] else ...[
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("No movies found for this genre"),
+                      ),
+                    ],
                   ],
                 ),
               );
@@ -165,7 +190,7 @@ class _HomeContent extends StatelessWidget {
               selected: selectedGenre == genre,
               onSelected: (selected) {
                 context.read<MovieBloc>().add(
-                      ChangeGenre(selected ? genre : 'All'),
+                      ChangeGenre(genre),
                     );
               },
               selectedColor: AppColors.primary,
@@ -185,7 +210,10 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget _buildSectionTitle(
-      BuildContext context, String title, List<Movie> movies) {
+    BuildContext context,
+    String title,
+    List<Movie> movies,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
       child: Row(

@@ -28,42 +28,55 @@ class WatchList extends StatelessWidget {
           style: AppStyles.s20w700.copyWith(color: AppColors.white),
         ),
       ),
-      body: BlocConsumer<WatchlistBloc, WatchlistState>(
-        listener: (context, state) {
-          state.whenOrNull(
-            error: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
-              );
-            },
-          );
-        },
+      body:
+      BlocBuilder<WatchlistBloc, WatchlistState>(
         builder: (context, state) {
-          return state.when(
-            initial: () => const Center(child: Text('Your watchlist is empty')),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            loaded: (movies) {
-              if (movies.isEmpty) {
-                return const Center(child: Text('Your watchlist is empty'));
-              }
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<WatchlistBloc>().add(const Load());
-                },
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: movies.length,
-                  itemBuilder: (context, index) {
-                    final movie = movies[index];
-                    return _buildWatchlistItem(context, movie);
-                  },
+          if (state is Loaded) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<WatchlistBloc>().add(const Load());
+              },
+              child: state.movies.isEmpty
+                  ? SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: Center(
+                    child: Text(
+                      'Your watchlist is empty',
+                      style: AppStyles.s16w400.copyWith(
+                        color: AppColors.grey,
+                      ),
+                    ),
+                  ),
                 ),
-              );
-            },
-            error: (message) => Center(child: Text('Error: $message')),
-            isAdded: (_) =>
-                const Center(child: Text('Your watchlist is empty')),
-          );
+              )
+                  : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: state.movies.length,
+                itemBuilder: (context, index) {
+                  final movie = state.movies[index];
+                  return _buildWatchlistItem(context, movie);
+                },
+              ),
+            );
+          }
+
+          // Handle loading state
+          if (state is Loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Handle error state
+          if (state is Error) {
+            return Center(child: Text(state.message));
+          }
+
+          // Initial state - trigger loading
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.read<WatchlistBloc>().add(const Load());
+          });
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
@@ -150,7 +163,8 @@ class WatchList extends StatelessWidget {
                         Text(
                           movie.releaseDate?.substring(0, 4) ?? 'Year unknown',
                           style: AppStyles.s14w400
-                              .copyWith(color: Colors.grey[700]),
+                              .copyWith(color: Colors.grey[700],
+                          ),
                         ),
                       ],
                     ),
