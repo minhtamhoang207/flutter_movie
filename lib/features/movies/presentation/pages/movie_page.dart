@@ -80,7 +80,7 @@ class HomePage extends StatelessWidget {
 }
 
 class _HomeContent extends StatelessWidget {
-  _HomeContent();
+   _HomeContent();
 
   final List<String> genres = [
     'All',

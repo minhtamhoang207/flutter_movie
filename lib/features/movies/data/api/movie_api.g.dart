@@ -59,7 +59,7 @@ class _MovieApi implements MovieApi {
     )
             .compose(
               _dio.options,
-              '/trending/all/day',
+              '/movie/popular',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -86,7 +86,7 @@ class _MovieApi implements MovieApi {
     )
             .compose(
               _dio.options,
-              '/trending/tv/day',
+              '/movie/top_rated',
               queryParameters: queryParameters,
               data: _data,
             )

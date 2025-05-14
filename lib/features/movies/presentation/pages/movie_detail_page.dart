@@ -12,30 +12,25 @@ import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_event.
 import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_state.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/youtube_player_page.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
 class MovieDetailPage extends StatefulWidget {
   final Movie movie;
   const MovieDetailPage({super.key, required this.movie});
-
   @override
   State<MovieDetailPage> createState() => _MovieDetailPageState();
 }
-
 class _MovieDetailPageState extends State<MovieDetailPage> {
   late String? _videoKey;
-
   @override
   void initState() {
     super.initState();
     _videoKey = widget.movie.videoKey;
     context.read<WatchlistBloc>().add(
-          WatchlistEvent.checkIfAdded(widget.movie.id),
-        );
+      WatchlistEvent.checkIfAdded(widget.movie.id),
+    );
     if (_videoKey == null) {
       _loadVideoKey();
     }
   }
-
   Future<void> _loadVideoKey() async {
     try {
       final repository = MovieRepository.internal();
@@ -45,7 +40,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       debugPrint('Error loading video: $e');
     }
   }
-
   void _onPlayPressed(BuildContext context) {
     context.read<WatchlistBloc>().add(WatchlistEvent.add(widget.movie));
     if (_videoKey == null || _videoKey!.isEmpty) {
@@ -63,12 +57,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final imageUrl = widget.movie.backdropPath ?? widget.movie.posterPath;
     final fullImageUrl =
-        imageUrl != null ? 'https://image.tmdb.org/t/p/w500$imageUrl' : null;
+    imageUrl != null ? 'https://image.tmdb.org/t/p/w500$imageUrl' : null;
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: context.read<FavoritesBloc>()),
@@ -88,7 +81,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             BlocBuilder<FavoritesBloc, FavoritesState>(
               builder: (context, state) {
                 final isFavorite =
-                    state.favorites.any((m) => m.id == widget.movie.id);
+                state.favorites.any((m) => m.id == widget.movie.id);
                 return IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -217,7 +210,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       ),
     );
   }
-
   Widget _buildWatchlistButton(BuildContext context) {
     return BlocConsumer<WatchlistBloc, WatchlistState>(
       listener: (context, state) {
@@ -241,7 +233,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             final lastValidState = context.read<WatchlistBloc>().state;
             if (lastValidState is Loaded) {
               final isInWatchlist = lastValidState.movies.any(
-                (m) => m.id == widget.movie.id,
+                    (m) => m.id == widget.movie.id,
               );
               return _buildWatchlistButtonContent(
                 context,
@@ -257,36 +249,35 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       },
     );
   }
-
   Widget _buildWatchlistButtonContent(
-    BuildContext context,
-    bool isInWatchlist,
-    bool isLoading,
-  ) {
+      BuildContext context,
+      bool isInWatchlist,
+      bool isLoading,
+      ) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: isLoading
             ? null
             : () {
-                debugPrint(
-                  'Watchlist button pressed - isInWatchlist: $isInWatchlist',
-                );
-                _handleWatchlistAction(context, isInWatchlist);
-              },
+          debugPrint(
+            'Watchlist button pressed - isInWatchlist: $isInWatchlist',
+          );
+          _handleWatchlistAction(context, isInWatchlist);
+        },
         icon: isLoading
             ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.primary,
-                ),
-              )
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.primary,
+          ),
+        )
             : Icon(
-                isInWatchlist ? Icons.bookmark : Icons.bookmark_border,
-                color: AppColors.primary,
-              ),
+          isInWatchlist ? Icons.bookmark : Icons.bookmark_border,
+          color: AppColors.primary,
+        ),
         label: isLoading
             ? const Text("Processing...")
             : Text(isInWatchlist ? "In Watchlist" : "Add to Watchlist"),
@@ -297,11 +288,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       ),
     );
   }
-
   void _handleWatchlistAction(BuildContext context, bool isInWatchlist) {
     final movie = widget.movie;
     debugPrint('Handling watchlist action for movie: ${movie.title}');
-
     if (isInWatchlist) {
       context.read<WatchlistBloc>().add(Remove(movie));
     } else {

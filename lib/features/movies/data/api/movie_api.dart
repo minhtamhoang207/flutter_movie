@@ -14,11 +14,11 @@ abstract class MovieApi {
     @Query('api_key') String apiKey,
   );
 
-  @GET('/trending/all/day')
+  @GET('/movie/popular')
   Future<MovieResponse> getPopularMovies(
     @Query('api_key') String apiKey,
   );
-  @GET('/trending/tv/day')
+  @GET('/movie/top_rated')
   Future<MovieResponse> getNowPlayingMovies(
     @Query('api_key') String apiKey,
   );
@@ -34,4 +34,5 @@ abstract class MovieApi {
     @Path('movie_id') int movieId,
     @Query('api_key') String apiKey,
   );
+
 }

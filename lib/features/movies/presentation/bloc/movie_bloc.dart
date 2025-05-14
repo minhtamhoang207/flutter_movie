@@ -1,10 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie/core/config/env_config.dart';
+import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/movie_event.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/movie_state.dart';
-import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
-import 'package:flutter_movie/core/config/env_config.dart';
-
-
 
 class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final MovieApi apiService;
@@ -20,7 +18,6 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     'Fantasy': 14,
     'Animation': 16,
   };
-
 
   MovieBloc(this.apiService) : super(const MovieState.initial()) {
     on<FetchMovies>(_onFetchMovies);
@@ -52,18 +49,19 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   void _onChangeGenre(ChangeGenre event, Emitter<MovieState> emit) {
     state.maybeWhen(
       loaded: (trendingMovies, popularMovies, nowPlayingMovies, _, __) {
-          final allMovies = [
-            ...trendingMovies,
-            ...popularMovies,
-            ...nowPlayingMovies,
-          ];
-          final filteredMovies = event.genre == 'All'
-              ? trendingMovies
-              : allMovies.where((movie) {
-            final genreId = genreMap[event.genre];
-            return genreId != null &&
-                (movie.genreIds?.contains(genreId) ?? false);
-          }).toList();
+        final allMovies = [
+          ...trendingMovies,
+          ...popularMovies,
+          ...nowPlayingMovies,
+        ];
+
+        final filteredMovies = event.genre == 'All'
+            ? trendingMovies
+            : allMovies.where((movie) {
+          final genreId = genreMap[event.genre];
+          return genreId != null &&
+              (movie.genreIds?.contains(genreId) ?? false);
+              }).toList();
 
         emit(MovieState.loaded(
           trendingMovies: trendingMovies,
@@ -73,7 +71,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
           filteredMovies: filteredMovies,
         ),);
       },
-      orElse: (){},
+      orElse: () {},
     );
   }
 }
