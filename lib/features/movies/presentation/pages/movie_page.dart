@@ -5,7 +5,8 @@ import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
-import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
+import 'package:flutter_movie/features/movies/data/models/user_model.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_state.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/movie_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/movie_event.dart';
@@ -29,7 +30,14 @@ class _MoviePageState extends State<MoviePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const FavoritePage(),
-    const ProfilePage(),
+    ProfilePage(
+      user: UserProfile(
+      name: 'User Name 123',
+      email: 'username123@gmail.com',
+      location: 'Unknown',
+      password: 'password123',
+      ),
+    ),
   ];
 
   void _onItemTapped(int index) {
@@ -281,7 +289,7 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget _buildMovieCard(Movie movie, double width, bool isTrending) {
-    return BlocBuilder<FavoritesBloc, FavoritesState>(
+    return BlocBuilder<FavoriteBloc, FavoriteState>(
       builder: (context, state) {
         return GestureDetector(
           onTap: () {

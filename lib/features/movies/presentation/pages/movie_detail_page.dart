@@ -12,6 +12,8 @@ import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_event.
 import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_state.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/youtube_player_page.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
+
 class MovieDetailPage extends StatefulWidget {
   final Movie movie;
   const MovieDetailPage({super.key, required this.movie});
@@ -64,7 +66,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     imageUrl != null ? 'https://image.tmdb.org/t/p/w500$imageUrl' : null;
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: context.read<FavoritesBloc>()),
+        BlocProvider.value(value: context.read<FavoriteBloc>()),
         BlocProvider.value(value: context.read<WatchlistBloc>()),
       ],
       child: Scaffold(
@@ -78,10 +80,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
           backgroundColor: AppColors.primary,
           actions: [
-            BlocBuilder<FavoritesBloc, FavoritesState>(
+            BlocBuilder<FavoriteBloc, FavoriteState>(
               builder: (context, state) {
-                final isFavorite =
-                state.favorites.any((m) => m.id == widget.movie.id);
+                final isFavorite = state.maybeMap(
+                  loaded: (loadedState) => loadedState.movies.any((m) => m.id == widget.movie.id),
+                  isAdded: (isAddedState) => isAddedState.isAdded,
+                  orElse: () => false,
+                );
                 return IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -90,12 +95,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   onPressed: () {
                     if (isFavorite) {
                       context
-                          .read<FavoritesBloc>()
-                          .add(RemoveFavorite(widget.movie));
+                          .read<FavoriteBloc>()
+                          .add(RemoveFromFavorites(widget.movie));
                     } else {
                       context
-                          .read<FavoritesBloc>()
-                          .add(AddFavorite(widget.movie));
+                          .read<FavoriteBloc>()
+                          .add(AddToFavorites(widget.movie));
                     }
                   },
                 );

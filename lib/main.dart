@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/features/movies/data/repository/watchlist_repository.dart';
-import 'package:flutter_movie/features/movies/presentation/bloc/favorite_event.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_page.dart';
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => FavoritesBloc()),
+          BlocProvider(create: (context) => FavoriteBloc()),
           BlocProvider(create: (context) => WatchlistBloc(WatchlistRepositoryImpl())),
         ],
         child: MaterialApp(

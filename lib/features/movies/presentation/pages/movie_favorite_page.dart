@@ -11,8 +11,9 @@ class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
 
   @override
+
   Widget build(BuildContext context) {
-    return BlocBuilder<FavoritesBloc, FavoritesState>(
+    return BlocBuilder<FavoriteBloc, FavoriteState>(
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -147,8 +148,8 @@ class FavoritePage extends StatelessWidget {
                                             color: AppColors.favorite,
                                           ),
                                           onPressed: () => context
-                                              .read<FavoritesBloc>()
-                                              .add(RemoveFavorite(movie)),
+                                              .read<FavoriteBloc>()
+                                              .add(RemoveFromFavorites(movie)),
                                         ),
                                       ],
                                     ),

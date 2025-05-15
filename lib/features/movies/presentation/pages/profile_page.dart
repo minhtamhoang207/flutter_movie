@@ -1,17 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/common/app_theme/app_colors.dart';
 import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
+import 'package:flutter_movie/features/movies/data/models/user_model.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/account_setting_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/help_support_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/privacy_policy_page.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/watchlist_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final UserProfile user;
+
+  const ProfilePage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppColors.white),
         backgroundColor: AppColors.primary,
         title: Text(
           'Profile',
@@ -27,26 +34,34 @@ class ProfilePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 60,
-                  backgroundImage: NetworkImage(
+                  backgroundImage: user.profileImage != null
+                      ? FileImage(user.profileImage!)
+                      : const NetworkImage(
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAnZO-HbYIOIzEYS_uNiCS2YtyAn53nJeWbw&s',
-                  ),
+                  ) as ImageProvider,
                 ),
                 const SizedBox(height: 20),
                 Column(
                   children: [
                     Text(
-                      'User Name 123',
+                      user.name,
                       style: AppStyles.s24w700.copyWith(
                         color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Email
                     Text(
-                      'username123@gmail.com',
+                      user.email,
                       style: AppStyles.s16w400.copyWith(
+                        color: AppColors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 8,),
+                    Text(
+                      user.location,
+                      style: AppStyles.s14w400.copyWith(
                         color: AppColors.grey,
                       ),
                     ),
@@ -62,7 +77,37 @@ class ProfilePage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const WatchList()),
               );
             }),
-            _buildInfoTile(Icons.settings, 'Account Settings', () {}),
+            _buildInfoTile(Icons.settings, 'Account Settings', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AccountSettingPage(
+                    user: user,
+                    onSave: (updatedUser) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(user: updatedUser),
+                        ),
+                      );
+                    },
+                    onCancel: ()
+                    {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ).then((updatedUser) {
+                if (updatedUser != null) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(user: updatedUser),
+                    ),
+                  );
+                }
+              });
+            }),
             _buildInfoTile(Icons.help_outline, 'Help & Support', () {
               Navigator.push(
                 context,

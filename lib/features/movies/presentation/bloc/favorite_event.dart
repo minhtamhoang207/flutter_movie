@@ -1,24 +1,11 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
-import 'package:flutter_movie/features/movies/presentation/bloc/favorite_state.dart';
+import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
-  FavoritesBloc() : super(const FavoritesState([])) {
-    on<AddFavorite>(_onAddFavorite);
-    on<RemoveFavorite>(_onRemoveFavorite);
-  }
+part 'favorite_event.freezed.dart';
 
-  void _onAddFavorite(AddFavorite event, Emitter<FavoritesState> emit) {
-    if (!state.favorites.any((movie) => movie.id == event.movie.id)) {
-      emit(FavoritesState([...state.favorites, event.movie]));
-    }
-  }
-
-  void _onRemoveFavorite(RemoveFavorite event, Emitter<FavoritesState> emit) {
-    emit(
-      FavoritesState(
-        state.favorites.where((movie) => movie.id != event.movie.id).toList(),
-      ),
-    );
-  }
+@freezed
+class FavoriteEvent with _$FavoriteEvent {
+  const factory FavoriteEvent.addToFavorites(Movie movie) = AddToFavorites;
+  const factory FavoriteEvent.removeFromFavorites(Movie movie) = RemoveFromFavorites;
+  const factory FavoriteEvent.checkIfAdded(Movie movie) = CheckIfAdded;
 }
