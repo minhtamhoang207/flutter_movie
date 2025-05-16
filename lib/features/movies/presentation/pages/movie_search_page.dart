@@ -55,15 +55,16 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: AppColors.white),
+        backgroundColor: AppColors.scaffold_background,
+        iconTheme: const IconThemeData(color: AppColors.grey_light),
         title: Text(
           'Search Movies',
           style: AppStyles.s18w700.copyWith(
-            color: AppColors.white,
+            color: AppColors.primary,
           ),
         ),
-        backgroundColor: AppColors.primary,
       ),
       body: Column(
         children: [
@@ -71,8 +72,10 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _controller,
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
               decoration: InputDecoration(
                 hintText: 'Search for a movie...',
+                hintStyle: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search, color: AppColors.primary),
                   onPressed: () {
@@ -119,10 +122,12 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
     }
 
     if (_currentQuery.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'Enter a movie title to search',
-          style: AppStyles.s16w400,
+          style: AppStyles.s16w400.copyWith(
+            color: AppColors.grey_light,
+          ),
         ),
       );
     }
@@ -131,7 +136,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
       return Center(
         child: Text(
           'No results for "$_currentQuery"',
-          style: AppStyles.s16w400,
+          style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
         ),
       );
     }
@@ -153,6 +158,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
             );
           },
           child: Card(
+            color: AppColors.surface_cards,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             elevation: 4,
             shape:
@@ -180,7 +186,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                       children: [
                         Text(
                           movie.title ?? 'No title',
-                          style: AppStyles.s18w700,
+                          style: AppStyles.s18w700.copyWith(color: AppColors.primary),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -191,7 +197,7 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                               ? movie.releaseDate!.substring(0, 4)
                               : 'Unknown Year',
                           style: AppStyles.s14w400.copyWith(
-                            color: AppColors.grey,
+                            color: AppColors.grey_light,
                           ),
                         ),
                       ],

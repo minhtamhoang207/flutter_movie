@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Movie App',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: Colors.red,
               useMaterial3: true,
             ),
             home: const MoviePage(),

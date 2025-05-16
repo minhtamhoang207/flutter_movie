@@ -17,15 +17,16 @@ class MovieListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.scaffold_background,
         iconTheme: const IconThemeData(
-          color: AppColors.white,
+          color: AppColors.grey_light,
         ),
         title: Text(
           title,
           style: AppStyles.s20w700.copyWith(
-            color: AppColors.white,
+            color: AppColors.primary,
           ),
         ),
       ),

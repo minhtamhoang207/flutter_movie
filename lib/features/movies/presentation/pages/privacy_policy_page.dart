@@ -8,67 +8,68 @@ class PrivacyPolicyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
         title: Text(
           'Privacy Policy',
-          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+          style: AppStyles.s20w700.copyWith(color: AppColors.primary),
         ),
-        iconTheme: const IconThemeData(color: AppColors.white),
-        backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: AppColors.grey),
+        backgroundColor: AppColors.scaffold_background,
       ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '1. Information We Collect',
-              style: AppStyles.s18w700,
+              style: AppStyles.s18w700.copyWith(color: AppColors.grey_light),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'We may collect personal information such as your name, email address, and usage data when you use our application.',
-              style: AppStyles.s16w400,
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               '2. How We Use Your Information',
-              style: AppStyles.s18w700,
+              style: AppStyles.s18w700.copyWith(color: AppColors.grey_light),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'We use the information to provide and improve our services, to communicate with you, and for analytics purposes.',
-              style: AppStyles.s16w400,
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               '3. Data Security',
-              style: AppStyles.s18w700,
+              style: AppStyles.s18w700.copyWith(color: AppColors.grey_light),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'We implement appropriate security measures to protect your personal information from unauthorized access.',
-              style: AppStyles.s16w400,
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               '4. Changes to This Policy',
-              style: AppStyles.s18w700,
+              style: AppStyles.s18w700.copyWith(color: AppColors.grey_light),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.',
-              style: AppStyles.s16w400,
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               '5. Contact Us',
-              style: AppStyles.s18w700,
+              style: AppStyles.s18w700.copyWith(color: AppColors.grey_light),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'If you have any questions about this Privacy Policy, please contact us at privacy@example.com.',
-              style: AppStyles.s16w400,
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey),
             ),
           ],
         ),

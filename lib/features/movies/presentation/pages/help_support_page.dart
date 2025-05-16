@@ -8,13 +8,14 @@ class HelpSupportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
         title: Text(
           'Help & Support',
-          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+          style: AppStyles.s20w700.copyWith(color: AppColors.primary),
         ),
-        iconTheme: const IconThemeData(color: AppColors.white),
-        backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: AppColors.grey),
+        backgroundColor: AppColors.scaffold_background,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -58,9 +59,11 @@ class HelpSupportPage extends StatelessWidget {
                     style: AppStyles.s18w700.copyWith(color: AppColors.primary),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Version: 1.0.0',
-                    style: AppStyles.s14w400,
+                    style: AppStyles.s14w400.copyWith(
+                      color: AppColors.grey_light,
+                    ),
                   ),
                 ],
               ),
@@ -79,11 +82,12 @@ class HelpSupportPage extends StatelessWidget {
   }) {
     return Card(
       elevation: 2,
+      color: AppColors.surface_cards,
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary),
-        title: Text(title, style: AppStyles.s18w700),
-        subtitle: Text(subtitle, style: AppStyles.s14w400),
-        trailing: const Icon(Icons.chevron_right),
+        title: Text(title, style: AppStyles.s18w700.copyWith(color: AppColors.grey_light)),
+        subtitle: Text(subtitle, style: AppStyles.s14w400.copyWith(color: AppColors.grey)),
+        trailing: const Icon(Icons.chevron_right, color: AppColors.grey_light,),
         onTap: onTap,
       ),
     );
@@ -93,7 +97,8 @@ class HelpSupportPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('FAQs', style: AppStyles.s18w700),
+        backgroundColor: AppColors.surface_cards,
+        title: Text('FAQs', style: AppStyles.s18w700.copyWith(color: AppColors.primary)),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +121,7 @@ class HelpSupportPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close', style: AppStyles.s14w400),
+            child: Text('Close', style: AppStyles.s14w400.copyWith(color: AppColors.primary)),
           ),
         ],
       ),
@@ -129,7 +134,7 @@ class HelpSupportPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(question, style: AppStyles.s14w400),
+          Text(question, style: AppStyles.s14w400.copyWith(color: AppColors.white)),
           const SizedBox(height: 4),
         ],
       ),

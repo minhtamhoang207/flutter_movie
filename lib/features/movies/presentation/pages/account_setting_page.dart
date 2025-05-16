@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_movie/common/app_theme/app_colors.dart';
 import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
@@ -10,14 +9,10 @@ import 'package:image_picker/image_picker.dart';
 
 class AccountSettingPage extends StatefulWidget {
   final UserProfile user;
-  final Function(UserProfile) onSave;
-  final VoidCallback onCancel;
 
   const AccountSettingPage({
     super.key,
     required this.user,
-    required this.onSave,
-    required this.onCancel,
   });
 
   @override
@@ -26,12 +21,12 @@ class AccountSettingPage extends StatefulWidget {
 
 class _AccountSettingPageState extends State<AccountSettingPage> {
   late UserProfile _currentUser;
+  final ImagePicker _picker = ImagePicker();
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _locationController;
   bool isObscurePassword = true;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -51,25 +46,20 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
     _locationController.dispose();
     super.dispose();
   }
+
+
   Future<void> _pickImage(ImageSource source) async {
     try {
-      FocusScope.of(context).unfocus();
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
-        imageQuality: 70,
-      );
-
-      if (pickedFile != null && mounted) {
+      final XFile? pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
+      if (pickedFile != null) {
         setState(() {
-          _currentUser.profileImage = File(pickedFile.path);
+          _currentUser = _currentUser.copyWith(profileImage: File(pickedFile.path));
         });
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick image: ${e.toString()}')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
     }
   }
 
@@ -104,76 +94,42 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final avatar = _currentUser.profileImage != null
+        ? FileImage(_currentUser.profileImage!)
+        : const NetworkImage(
+      'https://cdn.pixabay.com/photo/2022/12/02/03/34/girl-7630191_640.jpg',
+    ) as ImageProvider;
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: AppColors.white),
-        backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: AppColors.grey),
+        backgroundColor: AppColors.scaffold_background,
         title: Text('Account Settings',
-        style: AppStyles.s18w700.copyWith(color: AppColors.white),),
+        style: AppStyles.s18w700.copyWith(color: AppColors.primary),),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 4, color: AppColors.primary),
-                        boxShadow: [
-                          BoxShadow(
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            color: AppColors.black.withOpacity(0.1),
-                          ),
-                        ],
-                        shape: BoxShape.circle,
-                        image: _currentUser.profileImage != null
-                            ? DecorationImage(
-                          image: FileImage(_currentUser.profileImage!),
-                          fit: BoxFit.cover,
-                        )
-                            : const DecorationImage(
-                          image: NetworkImage(
-                            'https://cdn.pixabay.com/photo/2022/12/02/03/34/girl-7630191_640.jpg',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+      body:
+      ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Center(
+            child: Stack(
+              children: [
+                CircleAvatar(radius: 70, backgroundImage: avatar),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: _showImagePickerOptions,
+                    child: const CircleAvatar(
+                      backgroundColor: AppColors.primary,
+                      child: Icon(Icons.edit, color: AppColors.white),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: _showImagePickerOptions,
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: AppColors.white,
-                            ),
-                            color: AppColors.primary,
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
+            ),
+          ),
+
               const SizedBox(height: 30),
               _buildTextField(_nameController, 'Name', false),
               _buildTextField(_emailController, 'Email', false),
@@ -186,7 +142,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
-                      onPressed: widget.onCancel,
+                      onPressed: () => Navigator.pop(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -195,7 +151,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                         ),
                       ),
                       child: Text(
-                        'cancel',
+                        'Cancel',
                         style: AppStyles.s16w400.copyWith(color: AppColors.white),
                       ),
                     ),
@@ -208,7 +164,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                           location: _locationController.text,
                           profileImage: _currentUser.profileImage,
                         );
-                        widget.onSave(updatedUser);
+                        Navigator.pop(context, updatedUser);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -227,8 +183,6 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 
@@ -241,13 +195,15 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
       child: TextField(
         controller: controller,
+        cursorColor: AppColors.primary,
+        style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
         obscureText: isPasswordTextField ? isObscurePassword : false,
         decoration: InputDecoration(
           suffixIcon: isPasswordTextField
               ? IconButton(
             icon: Icon(
               isObscurePassword ? Icons.visibility : Icons.visibility_off,
-              color: AppColors.grey,
+              color: AppColors.primary,
             ),
             onPressed: () {
               setState(() {
@@ -258,9 +214,9 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
               : null,
           contentPadding: const EdgeInsets.only(bottom: 5),
           labelText: label,
-          labelStyle: AppStyles.s18w700,
+          labelStyle: AppStyles.s18w700.copyWith(color: AppColors.primary),
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintStyle: AppStyles.s16w400.copyWith(color: AppColors.grey),
+          hintStyle: AppStyles.s16w400.copyWith(color: AppColors.white),
           border: const UnderlineInputBorder(
             borderSide: BorderSide(color: AppColors.grey, width: 1),
           ),

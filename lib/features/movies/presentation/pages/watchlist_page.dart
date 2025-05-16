@@ -18,14 +18,15 @@ class WatchList extends StatelessWidget {
     });
 
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
         iconTheme: const IconThemeData(
-          color: AppColors.white,
+          color: AppColors.grey,
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.scaffold_background,
         title: Text(
           'Watchlist',
-          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+          style: AppStyles.s20w700.copyWith(color: AppColors.primary),
         ),
       ),
       body:
@@ -45,7 +46,7 @@ class WatchList extends StatelessWidget {
                     child: Text(
                       'Your watchlist is empty',
                       style: AppStyles.s16w400.copyWith(
-                        color: AppColors.grey,
+                        color: AppColors.grey_light,
                       ),
                     ),
                   ),
@@ -88,6 +89,7 @@ class WatchList extends StatelessWidget {
         : null;
 
     return Card(
+      color: AppColors.surface_cards,
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 20),
       shape: RoundedRectangleBorder(
@@ -111,7 +113,7 @@ class WatchList extends StatelessWidget {
                 height: 180,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[200],
+                  color: AppColors.grey_light,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -121,19 +123,19 @@ class WatchList extends StatelessWidget {
                           width: 120,
                           height: 180,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
+                          errorBuilder: (_, __, ___) => const Center(
                             child: Icon(
                               Icons.broken_image,
                               size: 50,
-                              color: Colors.grey[400],
+                              color: AppColors.grey_light,
                             ),
                           ),
                         )
-                      : Center(
+                      : const Center(
                           child: Icon(
                             Icons.movie,
                             size: 50,
-                            color: Colors.grey[400],
+                            color: AppColors.grey_light,
                           ),
                         ),
                 ),
@@ -154,16 +156,16 @@ class WatchList extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.calendar_today,
                           size: 16,
-                          color: Colors.grey[600],
+                          color: AppColors.grey_light,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           movie.releaseDate?.substring(0, 4) ?? 'Year unknown',
                           style: AppStyles.s14w400
-                              .copyWith(color: Colors.grey[700],
+                              .copyWith(color: AppColors.grey_light,
                           ),
                         ),
                       ],
@@ -180,13 +182,13 @@ class WatchList extends StatelessWidget {
                         Text(
                           movie.voteAverage?.toStringAsFixed(1) ?? 'N/A',
                           style: AppStyles.s14w400
-                              .copyWith(color: Colors.grey[700]),
+                              .copyWith(color: AppColors.grey_light,),
                         ),
                         const Spacer(),
                         IconButton(
                           icon: const Icon(
                             Icons.bookmark,
-                            color: AppColors.primary,
+                            color: AppColors.grey_light,
                           ),
                           onPressed: () => context
                               .read<WatchlistBloc>()
@@ -198,7 +200,7 @@ class WatchList extends StatelessWidget {
                     Text(
                       movie.overview ?? 'No description available',
                       style:
-                          AppStyles.s14w400.copyWith(color: Colors.grey[600]),
+                          AppStyles.s14w400.copyWith(color: AppColors.grey_light,),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),

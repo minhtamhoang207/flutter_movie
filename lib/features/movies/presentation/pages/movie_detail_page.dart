@@ -70,15 +70,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         BlocProvider.value(value: context.read<WatchlistBloc>()),
       ],
       child: Scaffold(
+        backgroundColor: AppColors.scaffold_background,
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: AppColors.white),
+          iconTheme: const IconThemeData(color: AppColors.grey_light),
           title: Text(
             widget.movie.title ?? 'Movie Detail',
             style: AppStyles.s18w700.copyWith(
-              color: AppColors.white,
+              color: AppColors.primary,
             ),
           ),
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.scaffold_background,
           actions: [
             BlocBuilder<FavoriteBloc, FavoriteState>(
               builder: (context, state) {
@@ -90,7 +91,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 return IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? AppColors.favorite : AppColors.white,
+                    color: isFavorite ? AppColors.favorite : AppColors.grey_light,
                   ),
                   onPressed: () {
                     if (isFavorite) {
@@ -134,11 +135,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   children: [
                     Text(
                       "Year: ${widget.movie.releaseDate?.split('-').first ?? 'N/A'}",
-                      style: AppStyles.s16w400,
+                      style: AppStyles.s16w400.copyWith(
+                        color: AppColors.grey_light,
+                      ),
                     ),
                     Text(
                       "Rating: ${widget.movie.voteAverage?.toStringAsFixed(1) ?? 'N/A'}",
-                      style: AppStyles.s16w400,
+                      style: AppStyles.s16w400.copyWith(
+                        color: AppColors.grey_light,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     RatingBarIndicator(
@@ -165,11 +170,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       onPressed: () => _onPlayPressed(context),
                       icon: const Icon(
                         Icons.play_arrow,
-                        color: AppColors.white,
+                        color: AppColors.grey_light,
                       ),
                       label: const Text(
                         "Play",
-                        style: TextStyle(color: AppColors.white),
+                        style: TextStyle(color: AppColors.grey_light),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -185,9 +190,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                         Icons.download,
                         color: AppColors.primary,
                       ),
-                      label: const Text("Download"),
+                      label: Text("Download", style: AppStyles.s14w400.copyWith(color: AppColors.primary),),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.white,
+                        backgroundColor: AppColors.surface_cards,
                         side: const BorderSide(color: AppColors.primary),
                       ),
                     ),
@@ -207,7 +212,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               Text(
                 widget.movie.overview ?? "No description available.",
                 textAlign: TextAlign.justify,
-                style: AppStyles.s16w400,
+                style: AppStyles.s16w400.copyWith(
+                  color: AppColors.grey_light,
+                ),
               ),
             ],
           ),
@@ -285,9 +292,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
         label: isLoading
             ? const Text("Processing...")
-            : Text(isInWatchlist ? "In Watchlist" : "Add to Watchlist"),
+            : Text(isInWatchlist ? "In Watchlist" : "Add to Watchlist", style: AppStyles.s14w400.copyWith(color: AppColors.primary),),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.surface_cards,
           side: const BorderSide(color: AppColors.primary),
         ),
       ),

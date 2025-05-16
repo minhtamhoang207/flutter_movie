@@ -27,34 +27,39 @@ class MoviePage extends StatefulWidget {
 class _MoviePageState extends State<MoviePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const FavoritePage(),
-    ProfilePage(
-      user: UserProfile(
-      name: 'User Name 123',
-      email: 'username123@gmail.com',
-      location: 'Unknown',
-      password: 'password123',
-      ),
-    ),
-  ];
+  UserProfile _currentUser = UserProfile(
+    name: 'Sweety',
+    email: 'Sweety123@gmail.com',
+    password: '12345678',
+    location: 'Seoul, Korea',
+    profileImage: null,
+  );
 
-  void _onItemTapped(int index) {
+  void _updateUser(UserProfile updatedUser) {
     setState(() {
-      _selectedIndex = index;
+      _currentUser = updatedUser;
     });
   }
-
-  @override
-  Widget build(BuildContext context) {
+    @override
+    Widget build(BuildContext context) {
+      final pages = [
+        const HomePage(),
+        const FavoritePage(),
+        ProfilePage(
+          initialUser: _currentUser,
+          onUserUpdate: _updateUser,
+        ),
+      ];
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColors.scaffold_background,
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.grey,
+        onTap: (index) => setState(() {
+          _selectedIndex = index;
+        }),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -107,13 +112,14 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: AppColors.white),
+        iconTheme: const IconThemeData(color: AppColors.primary),
         title: Text(
           'Movie App',
-          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+          style: AppStyles.s20w700.copyWith(color: AppColors.primary),
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.scaffold_background,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -203,9 +209,10 @@ class _HomeContent extends StatelessWidget {
               },
               selectedColor: AppColors.primary,
               checkmarkColor: AppColors.white,
+              backgroundColor: AppColors.scaffold_background,
               labelStyle: TextStyle(
                 color:
-                    selectedGenre == genre ? AppColors.white : AppColors.black,
+                    selectedGenre == genre ? AppColors.white : AppColors.white,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),

@@ -16,12 +16,13 @@ class FavoritePage extends StatelessWidget {
     return BlocBuilder<FavoriteBloc, FavoriteState>(
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: AppColors.scaffold_background,
           appBar: AppBar(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.scaffold_background,
             title: Text(
               'Favorites',
               style: AppStyles.s20w700.copyWith(
-                color: AppColors.white,
+                color: AppColors.primary,
               ),
             ),
           ),
@@ -30,7 +31,7 @@ class FavoritePage extends StatelessWidget {
                   child: Text(
                     'No favorite movies yet',
                     style: AppStyles.s16w400.copyWith(
-                      color: AppColors.grey,
+                      color: AppColors.grey_light,
                     ),
                   ),
                 )
@@ -43,6 +44,7 @@ class FavoritePage extends StatelessWidget {
                         : null;
 
                     return Card(
+                      color: AppColors.surface_cards,
                       elevation: 4,
                       margin: const EdgeInsets.only(bottom: 20),
                       shape: RoundedRectangleBorder(
@@ -66,7 +68,7 @@ class FavoritePage extends StatelessWidget {
                                 height: 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: Colors.grey[200],
+                                  color: AppColors.grey_light,
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
@@ -76,19 +78,19 @@ class FavoritePage extends StatelessWidget {
                                           width: 120,
                                           height: 180,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) => Center(
+                                          errorBuilder: (_, __, ___) => const Center(
                                             child: Icon(
                                               Icons.broken_image,
                                               size: 50,
-                                              color: Colors.grey[400],
+                                              color: AppColors.grey_light,
                                             ),
                                           ),
                                         )
-                                      : Center(
+                                      : const Center(
                                           child: Icon(
                                             Icons.movie,
                                             size: 50,
-                                            color: Colors.grey[400],
+                                            color: AppColors.grey_light,
                                           ),
                                         ),
                                 ),
@@ -109,17 +111,17 @@ class FavoritePage extends StatelessWidget {
                                     const SizedBox(height: 8),
                                     Row(
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.calendar_today,
                                           size: 16,
-                                          color: Colors.grey[600],
+                                          color: AppColors.grey_light,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
                                           movie.releaseDate?.substring(0, 4) ??
                                               'Year unknown',
                                           style: AppStyles.s14w400.copyWith(
-                                            color: Colors.grey[700],
+                                            color: AppColors.grey_light,
                                           ),
                                         ),
                                       ],
@@ -138,7 +140,7 @@ class FavoritePage extends StatelessWidget {
                                                   ?.toStringAsFixed(1) ??
                                               'N/A',
                                           style: AppStyles.s14w400.copyWith(
-                                            color: Colors.grey[700],
+                                            color: AppColors.grey_light,
                                           ),
                                         ),
                                         const Spacer(),
@@ -158,7 +160,7 @@ class FavoritePage extends StatelessWidget {
                                       movie.overview ??
                                           'No description available',
                                       style: AppStyles.s14w400
-                                          .copyWith(color: Colors.grey[600]),
+                                          .copyWith(color: AppColors.grey_light,),
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                     ),

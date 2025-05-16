@@ -38,12 +38,13 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffold_background,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: AppColors.white),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.scaffold_background,
         title: Text(
           'Trailer',
-          style: AppStyles.s20w700.copyWith(color: AppColors.white),
+          style: AppStyles.s20w700.copyWith(color: AppColors.primary),
         ),
       ),
       body: Center(
