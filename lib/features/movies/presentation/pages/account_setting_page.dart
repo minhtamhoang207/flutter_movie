@@ -217,8 +217,8 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
           labelStyle: AppStyles.s18w700.copyWith(color: AppColors.primary),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintStyle: AppStyles.s16w400.copyWith(color: AppColors.white),
-          border: const UnderlineInputBorder(
-            borderSide: BorderSide(color: AppColors.grey, width: 1),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.primary, width: 1),
           ),
         ),
       ),

@@ -13,8 +13,6 @@ class DioClient {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-
-    // Add interceptors for logging and curl command generation
     _dio.interceptors.addAll([
       CurlLoggerInterceptor(),
       LogInterceptor(

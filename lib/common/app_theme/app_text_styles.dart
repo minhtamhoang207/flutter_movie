@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 const String notoSansJP = 'NotoSansJP';
@@ -29,6 +27,12 @@ class AppStyles {
   static const TextStyle s24w700 = TextStyle(
     fontFamily: notoSansJP,
     fontSize: 24,
+    fontWeight: FontWeight.w700,
+  );
+
+  static const TextStyle s30w700 = TextStyle(
+    fontFamily: notoSansJP,
+    fontSize: 30,
     fontWeight: FontWeight.w700,
   );
 }

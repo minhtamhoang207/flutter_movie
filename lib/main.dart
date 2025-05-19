@@ -6,7 +6,7 @@ import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/features/movies/data/repository/watchlist_repository.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/watchlist_bloc.dart';
-import 'package:flutter_movie/features/movies/presentation/pages/movie_page.dart';
+import 'package:flutter_movie/features/movies/presentation/pages/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.red,
               useMaterial3: true,
             ),
-            home: const MoviePage(),
+            home: const SplashScreen(),
           // home: const ScreenTitle(key: Key('screenTitle'), text: 'Welcome'),
         ),
     );

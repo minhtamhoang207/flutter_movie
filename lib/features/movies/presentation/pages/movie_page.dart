@@ -116,8 +116,8 @@ class _HomeContent extends StatelessWidget {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: AppColors.primary),
         title: Text(
-          'Movie App',
-          style: AppStyles.s20w700.copyWith(color: AppColors.primary),
+          'Movie',
+          style: AppStyles.s30w700.copyWith(color: AppColors.primary),
         ),
         backgroundColor: AppColors.scaffold_background,
         actions: [
@@ -133,8 +133,8 @@ class _HomeContent extends StatelessWidget {
       body: BlocBuilder<MovieBloc, MovieState>(
         builder: (context, state) {
           return state.when(
-            initial: () => const Center(child: CircularProgressIndicator()),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            initial: () => const Center(child: CircularProgressIndicator(color: AppColors.primary,)),
+            loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary,)),
             error: (message) => Center(child: Text(message)),
             loaded: (
               trendingMovies,
@@ -208,11 +208,11 @@ class _HomeContent extends StatelessWidget {
                     );
               },
               selectedColor: AppColors.primary,
-              checkmarkColor: AppColors.white,
+              checkmarkColor: AppColors.scaffold_background,
               backgroundColor: AppColors.scaffold_background,
               labelStyle: TextStyle(
                 color:
-                    selectedGenre == genre ? AppColors.white : AppColors.white,
+                    selectedGenre == genre ? AppColors.scaffold_background : AppColors.grey_light,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
@@ -252,13 +252,34 @@ class _HomeContent extends StatelessWidget {
                 ),
               );
             },
-            child: Text(
-              'show all',
-              style: AppStyles.s14w400.copyWith(
-                color: AppColors.primary,
-                decoration: TextDecoration.underline,
-              ),
+            child:
+            Stack(
+              children: [
+                Text(
+                  'show all',
+                  style: AppStyles.s14w400.copyWith(
+                    color: AppColors.primary, // Your text color
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 1.5,
+                    color: AppColors.primary, // Red underline
+                  ),
+                ),
+              ],
             ),
+
+            // Text(
+            //   'show all',
+            //   style: AppStyles.s14w400.copyWith(
+            //     color: AppColors.primary,
+            //     decoration: TextDecoration.underline,
+            //   ),
+            // ),
           ),
         ],
       ),

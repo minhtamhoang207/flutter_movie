@@ -17,6 +17,5 @@ class Movie with _$Movie {
     String? videoKey,
     bool? isInWatchlist,
   }) = _Movie;
-
   factory Movie.fromJson(Map<String, dynamic> json) => _$MovieFromJson(json);
 }
