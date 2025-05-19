@@ -1,153 +1,143 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie/common/app_theme/app_colors.dart';
 import 'package:flutter_movie/common/app_theme/app_text_styles.dart';
-import 'package:flutter_movie/core/config/env_config.dart';
-import 'package:flutter_movie/core/di/injection.dart';
-import 'package:flutter_movie/core/network/dio_client.dart';
-import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
 import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/search_bloc.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/search_event.dart';
+import 'package:flutter_movie/features/movies/presentation/bloc/search_state.dart';
 import 'package:flutter_movie/features/movies/presentation/pages/movie_detail_page.dart';
 
-class MovieSearchPage extends StatefulWidget {
+class MovieSearchPage extends StatelessWidget {
   const MovieSearchPage({super.key});
 
   @override
-  State<MovieSearchPage> createState() => _MovieSearchPageState();
-}
-
-class _MovieSearchPageState extends State<MovieSearchPage> {
-  final TextEditingController _controller = TextEditingController();
-  final MovieApi apiService = MovieApi(getIt<DioClient>().dio);
-
-  List<Movie> searchResults = [];
-  bool isLoading = false;
-  String _currentQuery = '';
-
-  void _searchMovies(String query) async {
-    if (query.isEmpty || query == _currentQuery) return;
-
-    setState(() {
-      isLoading = true;
-      _currentQuery = query;
-    });
-
-    try {
-      final response =
-          await apiService.getSearchMovies(EnvConfig.apiKey, query);
-      setState(() {
-        searchResults = response.results ?? [];
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Search error: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.scaffold_background,
-      appBar: AppBar(
+    return BlocProvider(
+      create: (context) => SearchBloc(),
+      child: Scaffold(
         backgroundColor: AppColors.scaffold_background,
-        iconTheme: const IconThemeData(color: AppColors.grey_light),
-        title: Text(
-          'Search Movies',
-          style: AppStyles.s18w700.copyWith(
-            color: AppColors.primary,
+        appBar: AppBar(
+          backgroundColor: AppColors.scaffold_background,
+          iconTheme: const IconThemeData(color: AppColors.grey_light),
+          title: Text(
+            'Search Movies',
+            style: AppStyles.s18w700.copyWith(color: AppColors.primary),
           ),
         ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _controller,
-              style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
-              decoration: InputDecoration(
-                hintText: 'Search for a movie...',
-                hintStyle: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search, color: AppColors.primary),
-                  onPressed: () {
-                    _searchMovies(_controller.text.trim());
-                  },
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 2.0,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1.5,
-                  ),
-                ),
-                filled: false,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-              ),
-              textInputAction: TextInputAction.search,
-              onSubmitted: (value) {
-                _searchMovies(value.trim());
-              },
-            ),
-          ),
-          Expanded(
-            child: _buildSearchResult(),
-          ),
-        ],
+        body: Column(
+          children: [
+            _SearchField(),
+            const Expanded(child: _SearchResults()),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildSearchResult() {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+class _SearchField extends StatelessWidget {
+  final TextEditingController _controller = TextEditingController();
 
-    if (_currentQuery.isEmpty) {
-      return Center(
-        child: Text(
-          'Enter a movie title to search',
-          style: AppStyles.s16w400.copyWith(
-            color: AppColors.grey_light,
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: TextField(
+        controller: _controller,
+        cursorColor: AppColors.primary,
+        style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
+        decoration: InputDecoration(
+          hintText: 'Search for a movie...',
+          hintStyle: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.search, color: AppColors.primary),
+            onPressed: () {
+              context.read<SearchBloc>().add(
+                    SearchEvent.searchMovies(_controller.text.trim()),
+                  );
+            },
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: const BorderSide(
+              color: AppColors.primary,
+              width: 2.0,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: const BorderSide(
+              color: AppColors.primary,
+              width: 1.5,
+            ),
+          ),
+          filled: false,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
           ),
         ),
-      );
-    }
+        textInputAction: TextInputAction.search,
+        onSubmitted: (value) {
+          context.read<SearchBloc>().add(
+                SearchEvent.searchMovies(value.trim()),
+              );
+        },
+        onChanged: (value) {
+          if (value.isEmpty) {
+            context.read<SearchBloc>().add(const SearchEvent.clearSearch());
+          }
+        },
+      ),
+    );
+  }
+}
 
-    if (searchResults.isEmpty) {
-      return Center(
-        child: Text(
-          'No results for "$_currentQuery"',
-          style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
-        ),
-      );
-    }
+class _SearchResults extends StatelessWidget {
+  const _SearchResults();
 
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SearchBloc, SearchState>(
+      builder: (context, state) {
+        return state.when(
+          initial: () => Center(
+            child: Text(
+              'Enter a movie title to search',
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
+            ),
+          ),
+          loading: () => const Center(
+              child: CircularProgressIndicator(
+            color: AppColors.primary,
+          ),
+          ),
+          loaded: (movies) => _MovieList(movies: movies),
+          error: (message) => Center(child: Text(message)),
+          empty: () => Center(
+            child: Text(
+              'No results found',
+              style: AppStyles.s16w400.copyWith(color: AppColors.grey_light),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _MovieList extends StatelessWidget {
+  final List<Movie> movies;
+
+  const _MovieList({required this.movies});
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: searchResults.length,
+      itemCount: movies.length,
       itemBuilder: (context, index) {
-        if (index >= searchResults.length) {
-          return const SizedBox.shrink();
-        }
-        final movie = searchResults[index];
+        final movie = movies[index];
         return InkWell(
           onTap: () {
             Navigator.push(
@@ -161,8 +151,9 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
             color: AppColors.surface_cards,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             elevation: 4,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Row(
               children: [
                 ClipRRect(
@@ -173,9 +164,16 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                           height: 100,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.movie),
+                              const Icon(
+                            Icons.movie,
+                            color: AppColors.grey,
+                          ),
                         )
-                      : const Icon(Icons.movie, size: 50),
+                      : const Icon(
+                          Icons.movie,
+                          size: 50,
+                          color: AppColors.grey,
+                        ),
                 ),
                 Expanded(
                   child: Padding(
@@ -186,7 +184,9 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                       children: [
                         Text(
                           movie.title ?? 'No title',
-                          style: AppStyles.s18w700.copyWith(color: AppColors.primary),
+                          style: AppStyles.s18w700.copyWith(
+                            color: AppColors.primary,
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
