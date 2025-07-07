@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_movie/core/config/env_config.dart';
 import 'package:flutter_movie/core/di/injection.dart';
 import 'package:flutter_movie/features/movies/data/api/movie_api.dart';
-import 'package:flutter_movie/features/movies/data/models/movie_model.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/search_event.dart';
 import 'package:flutter_movie/features/movies/presentation/bloc/search_state.dart';
 
