@@ -188,7 +188,7 @@ class WatchList extends StatelessWidget {
                         IconButton(
                           icon: const Icon(
                             Icons.bookmark,
-                            color: AppColors.grey_light,
+                            color: AppColors.yellow,
                           ),
                           onPressed: () => context
                               .read<WatchlistBloc>()
